@@ -40,11 +40,11 @@ void	ft_process_line(t_minishell *s)
 		check_env_var(s);
 		ft_get_path(s);	// Cambiado por error al liberar command_path dos lineas mas abajo ya que se libera en cada vuelta del while pero solo se reservaba cuando no era blt
 		ft_process_tokken(s);
-		ft_free_ptr(s->command_path);
-		ft_free_ptr(s->path); // Anadido
-		ft_free_matrix(s->tokens);
+		s->command_path = ft_free_ptr(s->command_path);
+		s->path = ft_free_ptr(s->path); // Anadido
+		s->tokens = ft_free_matrix(s->tokens);
 		i++;
 	}
-	ft_free_matrix(s->commands);
+	s->commands = ft_free_matrix(s->commands);
 }
 

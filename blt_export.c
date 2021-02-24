@@ -42,7 +42,7 @@ void    blt_export(t_minishell *s)
 	while (s->tokens[i])
 	{
 		j = 0;
-		while(ft_isalnum(s->tokens[i][j]))
+		while(ft_isalnum(s->tokens[i][j]) || s->tokens[i][j] == '_')
 			j++;
 		if (s->tokens[i][j] == '=')
 			export_env_var(s, s->tokens[i], j + 1);

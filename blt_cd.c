@@ -10,7 +10,7 @@ void	blt_cd(t_minishell *s)
 	{
 		if (!(ft_strncmp("PWD=", s->env[i], 4)))
 		{
-			ft_free_ptr(s->env[i]);
+			s->env[i] = ft_free_ptr(s->env[i]);
 			s->env[i] = ft_strdup(s->tokens[1]);
 			break ;
 		}

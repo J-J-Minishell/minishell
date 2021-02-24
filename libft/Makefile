@@ -36,7 +36,7 @@ CC          =   gcc
 
 CFLAGS      =   -Wall -Wextra -Werror
 
-LFLAGS      =   -c
+LFLAGS      =   -c -g
 
 RM			=	rm -f
 

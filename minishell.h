@@ -37,7 +37,7 @@ void	ft_initialize_variables(t_minishell *s);
 
 void	ft_clean_up(t_minishell *s);
 void	ft_print_error(t_minishell *s);
-void	ft_free_matrix(char **matrix);
+void	*ft_free_matrix(char **matrix);
 
 void	ft_read_line(t_minishell *s);
 

@@ -15,7 +15,7 @@ void    blt_pwd(t_minishell *s)
     }
     ft_putstr_fd(buf, 0);
     write(1, "\n", 1);
-    ft_free_ptr(buf);
+    buf = ft_free_ptr(buf);
 }
 
 //

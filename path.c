@@ -9,9 +9,9 @@ void    ft_get_path(t_minishell *s)
     paths = ft_split(s->path, ':');
     temp = ft_check_dir(s, paths);
     complete_path = ft_strjoin(temp, "/");
-    ft_free_matrix(paths);
+    paths = ft_free_matrix(paths);
     s->command_path = ft_strjoin(complete_path, s->tokens[0]);
-    ft_free_ptr(complete_path);
+    complete_path = ft_free_ptr(complete_path);
 }
 
 char    *ft_check_dir(t_minishell *s, char **paths)
