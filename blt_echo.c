@@ -19,12 +19,24 @@ int		quotes(t_minishell *s, int i, int j)
 	return (j);
 }
 
+int		flag_newline(t_minishell *s)
+{
+	int i;
+
+	i = 1;
+	while (ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
+		i++;
+	return (i);
+}
+
 void	cmd_echo(t_minishell *s)
 {
 	int		i;
 	int		j;
+	int		newline;
 
-	i = 1;
+	i = flag_newline(s);
+	newline = i > 1 ? 0 : 1;
 	while (s->tokens[i])
 	{
 		j = 0;
@@ -36,9 +48,10 @@ void	cmd_echo(t_minishell *s)
 				write(1, s->tokens[i] + j, 1);
 			j++;
 		}
-		if (j)
+		if (j && s->tokens[i + 1])
 			write(1, " ", 1);
 		i++;
 	}
-	write(1, "\n", 1);
+	if (newline)
+		write(1, "\n", 1);
 }

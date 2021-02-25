@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+int		find_env_var(t_minishell *s, char *var)
+{
+	int	i;
+
+	i = 0;
+	while (s->env[i])
+	{
+		if (!(ft_strncmp(var, s->env[i], ft_strlen(var))))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
 void	ft_clean_up(t_minishell *s)
 {
 	if (s->line != NULL)

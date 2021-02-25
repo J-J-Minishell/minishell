@@ -16,15 +16,9 @@ int		len_env_var(t_minishell *s, char *str)
 	temp = str[0] == '=' ? ft_substr(str, 1, i) : ft_substr(str, 0, i);
 	name = ft_strjoin(temp, "=");
 	temp = ft_free_ptr(temp);
-	i = -1;
-	while (s->env[++i] != NULL)
-	{
-		if (ft_strncmp(s->env[i], name, ft_strlen(name)) == 0)
-		{
-			s->env_address = ft_strdup(s->env[i] + len);
-			break;
-		}
-	}
+	i = find_env_var(s, name);
+	if (i >= 0)
+		s->env_address = ft_strdup(s->env[i] + len);
 	name = ft_free_ptr(name);
 	if (s->env_address)
 		return (len);
