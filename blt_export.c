@@ -19,7 +19,7 @@ void    export_env_var(t_minishell *s, char *export_var, int len_name)
 		i++;
 	}
 	i++;
-	if (!(tmp = (char **)malloc(sizeof(char *) * i + 1)))
+	if (!(tmp = (char **)malloc(sizeof(char *) * i + 8)))
 		ft_print_error(s);
 	i = 0;
 	while (s->env[i])
@@ -29,7 +29,7 @@ void    export_env_var(t_minishell *s, char *export_var, int len_name)
 	}
 	tmp[i++] = ft_strdup(export_var);
 	tmp[i] = NULL;
-	free(s->env);
+	ft_free_matrix(s->env);
 	s->env = tmp;
 }
 
