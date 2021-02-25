@@ -29,7 +29,7 @@ void	blt_cd(t_minishell *s)
 	int		i;
 	char	*tmp;
 
-	if (s->tokens[1])
+	if (s->tokens[1] && ft_strncmp(s->tokens[1], "~", 1))
 	{
 		if (chdir(s->tokens[1]) == 0)
 			change_pwd(s);
@@ -43,10 +43,8 @@ void	blt_cd(t_minishell *s)
 	}
 	else
 	{
-		i = find_env_var(s, "USER=");     // no estoy seguro si es USER o USERNAME 
-		tmp = ft_strjoin("/home/", s->env[i] + 5);
-		if (chdir(tmp) == 0)
+		i = find_env_var(s, "HOME=");
+		if (chdir(s->env[i] + 5) == 0)
 			change_pwd(s);
-		tmp = ft_free_ptr(tmp);
 	}
 }
