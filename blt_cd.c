@@ -7,7 +7,7 @@ void	change_pwd(t_minishell *s)
 	size_t  size;
 
     size = 4096;
-	i = find_env_var(s, "PWD=");
+	i = ft_find_env_var(s, "PWD=");
 	if (i >= 0)
 	{
 		s->env[i] = ft_free_ptr(s->env[i]);
@@ -16,7 +16,8 @@ void	change_pwd(t_minishell *s)
 		while ((getcwd(buf, size) == NULL) && errno == ERANGE)
 		{
 			size = size + 4096;
-			if (!(buf = realloc(buf, size))) // realloc en teoría no se puede usar...
+			buf = ft_free_ptr(buf);
+			if (!(buf = ft_realloc(NULL, size)))
 				ft_print_error(s);
 		}
 		s->env[i] = ft_strjoin("PWD=", buf);
@@ -28,9 +29,18 @@ void	blt_cd(t_minishell *s)
 {
 	int		i;
 	char	*tmp;
+	char	*tmp2;
 
-	if (s->tokens[1] && ft_strncmp(s->tokens[1], "~", 1))
+	if (s->tokens[1])
 	{
+		if (s->tokens[1][0] == '~')
+		{
+			tmp = ft_get_env_var_content(s, "HOME=");
+			tmp2 = ft_strjoin(tmp, s->tokens[1] + 1);
+			free(s->tokens[1]);
+			s->tokens[1] = tmp2;
+			tmp = ft_free_ptr(tmp);
+		}
 		if (chdir(s->tokens[1]) == 0)
 			change_pwd(s);
 		else
@@ -43,7 +53,7 @@ void	blt_cd(t_minishell *s)
 	}
 	else
 	{
-		i = find_env_var(s, "HOME=");
+		i = ft_find_env_var(s, "HOME=");
 		if (chdir(s->env[i] + 5) == 0)
 			change_pwd(s);
 	}
