@@ -4,7 +4,7 @@ void    blt_pwd(t_minishell *s)
 {
     int i;
 
-    i = find_env_var(s, "PWD=");
+    i = ft_find_env_var(s, "PWD=");
     if (i >= 0)
     {
         ft_putstr_fd(s->env[i] + 4, 0);

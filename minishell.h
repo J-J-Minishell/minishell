@@ -27,7 +27,6 @@ typedef struct	s_minishell
 	char	**blt_cmds;
 }				t_minishell;
 
-int		find_env_var(t_minishell *s, char *var);
 void	check_env_var(t_minishell *s);
 void	cmd_echo(t_minishell *s);
 char	**special_split(char const *s, char c);
@@ -39,6 +38,8 @@ void	ft_initialize_variables(t_minishell *s);
 void	ft_clean_up(t_minishell *s);
 void	ft_print_error(t_minishell *s);
 void	*ft_free_matrix(char **matrix);
+char	*ft_get_env_var_content(t_minishell *s, char *var);
+int		ft_find_env_var(t_minishell *s, char *var);
 
 void	ft_read_line(t_minishell *s);
 
