@@ -6,7 +6,7 @@
 #    By: jgalian- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/05 08:30:00 by jgalian-          #+#    #+#              #
-#    Updated: 2019/12/10 11:56:40 by jgalian-         ###   ########.fr        #
+#    Updated: 2021/02/26 00:00:41 by jgalian-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ SRCS		=	ft_memset.c ft_bzero.c ft_memcpy.c ft_memccpy.c \
 				ft_substr.c ft_strjoin.c ft_strtrim.c ft_split.c \
 				ft_itoa.c ft_strmapi.c ft_putchar_fd.c ft_putstr_fd.c \
 				ft_putendl_fd.c ft_putnbr_fd.c ft_free_ptr.c \
+				ft_realloc.c
 
 
 OBJS        =   ${SRCS:.c=.o}

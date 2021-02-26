@@ -6,7 +6,7 @@
 /*   By: jgalian- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 14:29:48 by jgalian-          #+#    #+#             */
-/*   Updated: 2019/12/10 11:57:01 by jgalian-         ###   ########.fr       */
+/*   Updated: 2021/02/26 00:04:17 by jgalian-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,6 @@ void			ft_lstclear(t_list **lst, void(*del)(void*));
 void			ft_lstiter(t_list *lst, void (*f)(void*));
 t_list			*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*));
 void			*ft_free_ptr(void *ptr);
+void 			*ft_realloc(void *ptr, size_t size);
 
 #endif
