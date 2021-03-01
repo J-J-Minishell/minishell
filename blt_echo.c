@@ -24,7 +24,8 @@ int		flag_newline(t_minishell *s)
 	int i;
 
 	i = 1;
-	while (ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
+	while (s->tokens[i] && s->tokens[i][0] != '\0' &&
+		ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
 		i++;
 	return (i);
 }

@@ -11,8 +11,6 @@ int		len_env_var(t_minishell *s, char *str)
 	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
 	len = i + 1;
-	if (str[i] != '"' && str[i] != '\'' && str[i] != '\0' && str[i] != ' ' && str[i] != '$')
-		return (0);
 	temp = str[0] == '=' ? ft_substr(str, 1, i) : ft_substr(str, 0, i);
 	name = ft_strjoin(temp, "=");
 	temp = ft_free_ptr(temp);

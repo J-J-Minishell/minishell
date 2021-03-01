@@ -29,7 +29,7 @@ void    export_env_var(t_minishell *s, char *export_var, int len_name)
 	}
 	tmp[i++] = ft_strdup(export_var);
 	tmp[i] = NULL;
-	ft_free_matrix(s->env);
+	s->env = ft_free_matrix(s->env);
 	s->env = tmp;
 }
 

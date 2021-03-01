@@ -10,6 +10,9 @@ void	change_pwd(t_minishell *s)
 	i = ft_find_env_var(s, "PWD=");
 	if (i >= 0)
 	{
+		buf = ft_strjoin("OLDPWD=", s->env[i] + 4);
+		export_env_var(s, buf, 7);
+		buf = ft_free_ptr(buf);
 		s->env[i] = ft_free_ptr(s->env[i]);
 		if (!(buf = malloc(size)))
 			ft_print_error(s);
@@ -25,36 +28,77 @@ void	change_pwd(t_minishell *s)
 	}
 }
 
-void	blt_cd(t_minishell *s)
+void	special_chars_cd(t_minishell *s)
 {
 	int		i;
 	char	*tmp;
-	char	*tmp2;
+
+	if (s->tokens[1][0] == '~')
+	{
+		i = ft_find_env_var(s, "HOME=");
+		if (i >= 0)
+		{
+			tmp = ft_strjoin(s->env[i] + 5, s->tokens[1] + 1);
+			free(s->tokens[1]);
+			s->tokens[1] = tmp;
+		}
+	}
+	else if (s->tokens[1][0] == '-')
+	{
+		i = ft_find_env_var(s, "OLDPWD=");
+		if (i >= 0)
+		{
+			free(s->tokens[1]);
+			s->tokens[1] = ft_strdup(s->env[i] + 7);
+			ft_putstr_fd(s->tokens[1], 0);
+			write (0, "\n", 1);
+		}
+	}
+}
+
+int		check_arguments(t_minishell *s)
+{
+	int i;
+
+	i = 1;
+	while (s->tokens[i])
+		i++;
+	if (i >= 4)
+		ft_putstr_fd("cd: too many arguments\n", 0);
+	else if (i == 3)
+	{
+		ft_putstr_fd("cd: string not in pwd: ", 0);
+		ft_putstr_fd(s->tokens[1], 0);
+		write (0, "\n", 1);
+	}
+	else
+		return (0);
+	return (1);
+}
+
+void	blt_cd(t_minishell *s)
+{
+	int		i;
 
 	if (s->tokens[1])
 	{
-		if (s->tokens[1][0] == '~')
-		{
-			tmp = ft_get_env_var_content(s, "HOME=");
-			tmp2 = ft_strjoin(tmp, s->tokens[1] + 1);
-			free(s->tokens[1]);
-			s->tokens[1] = tmp2;
-			tmp = ft_free_ptr(tmp);
-		}
+		if (check_arguments(s))
+			return ;
+		special_chars_cd(s);
 		if (chdir(s->tokens[1]) == 0)
 			change_pwd(s);
 		else
 		{
-			tmp = ft_strjoin("cd: no such file or directory: ", s->tokens[1]);
-			ft_putstr_fd(tmp, 0);
+			ft_putstr_fd("cd: no such file or directory: ", 0);
+			ft_putstr_fd(s->tokens[1], 0);
 			write (0, "\n", 1);
-			tmp = ft_free_ptr(tmp);
 		}
 	}
 	else
 	{
 		i = ft_find_env_var(s, "HOME=");
-		if (chdir(s->env[i] + 5) == 0)
-			change_pwd(s);
+		if (i >= 0)
+			if (chdir(s->env[i] + 5) == 0)
+				change_pwd(s);
 	}
 }
