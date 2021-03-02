@@ -27,7 +27,7 @@ typedef struct	s_minishell
 	char	**blt_cmds;
 }				t_minishell;
 
-void    export_env_var(t_minishell *s, char *export_var, int len_name);
+void	export_env_var(t_minishell *s, char *export_var, int len_name);
 void	check_env_var(t_minishell *s);
 void	cmd_echo(t_minishell *s);
 char	**special_split(char const *s, char c);

@@ -1,13 +1,13 @@
 #include "minishell.h"
 
-static char		*next_word(const char *s, char c)
+static char	*next_word(const char *s, char c)
 {
 	while (*s != '\0' && *s == c)
 		s++;
 	return ((char*)s);
 }
 
-static int		count_words(const char *s, char c)
+static int	count_words(const char *s, char c)
 {
 	int i;
 	int double_q;
@@ -39,7 +39,7 @@ static int		count_words(const char *s, char c)
 	return (w);
 }
 
-static int		count_chars(const char *s, char c)
+static int	count_chars(const char *s, char c)
 {
 	int		i;
 	int double_q;
@@ -61,7 +61,7 @@ static int		count_chars(const char *s, char c)
 	return (i);
 }
 
-static void		clean(char **out, int w)
+static void	clean(char **out, int w)
 {
 	while (w)
 	{
@@ -71,7 +71,7 @@ static void		clean(char **out, int w)
 	free(out);
 }
 
-char			**special_split(char const *s, char c)
+char		**special_split(char const *s, char c)
 {
 	int		wordcount;
 	int		w;

@@ -12,11 +12,11 @@
 
 
 // valgrind --leak-check=full \
-//          --show-leak-kinds=all \
-//          --track-origins=yes \
-//          --verbose \
-//          --log-file=valgrind-out.txt \
-//          ./minishell
+//			--show-leak-kinds=all \
+//			--track-origins=yes \
+//			--verbose \
+//			--log-file=valgrind-out.txt \
+//			./minishell
 
 #include "minishell.h"
 
@@ -39,19 +39,19 @@ int		main(int argc, char *argv[], char **envp)
 	return (0);
 }
 
-void    ft_get_env_variables(t_minishell *s, char **envp)
+void	ft_get_env_variables(t_minishell *s, char **envp)
 {
-    int     i;
-    int     n;
-    n = 0;
-    while (envp[n])                                         // Count number of environment variables
-        n++;
-    if (!(s->env = (char **)malloc(sizeof(char *) * (n + 1))))      // Alloc memory to copy the environment variables...
-        ft_print_error(s);                                          // ...from envp to an internal variable
-    i = -1;
-    while (++i < n)
-        s->env[i] = ft_strdup(envp[i]);             // Copying external env. variables to my local env variable
-    s->env[i] = NULL;
+	int		i;
+	int		n;
+	n = 0;
+	while (envp[n])									// Count number of environment variables
+		n++;
+	if (!(s->env = (char **)malloc(sizeof(char *) * (n + 1))))		// Alloc memory to copy the environment variables...
+		ft_print_error(s);											// ...from envp to an internal variable
+	i = -1;
+	while (++i < n)
+		s->env[i] = ft_strdup(envp[i]);				// Copying external env. variables to my local env variable
+	s->env[i] = NULL;
 }
 
 void	ft_initialize_variables(t_minishell *s)

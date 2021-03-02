@@ -6,7 +6,7 @@ void	change_pwd(t_minishell *s)
 	char	*buf;
 	size_t  size;
 
-    size = 4096;
+	size = 4096;
 	i = ft_find_env_var(s, "PWD=");
 	if (i >= 0)
 	{

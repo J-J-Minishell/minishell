@@ -1,12 +1,12 @@
 #include "minishell.h"
 
-void    change_export_var(t_minishell *s, char *export_var, int i)
+void	change_export_var(t_minishell *s, char *export_var, int i)
 {
 	free(s->env[i]);
 	s->env[i] = ft_strdup(export_var);
 }
 
-void    export_env_var(t_minishell *s, char *export_var, int len_name)
+void	export_env_var(t_minishell *s, char *export_var, int len_name)
 {
 	char **tmp;
 	int i;
@@ -33,7 +33,7 @@ void    export_env_var(t_minishell *s, char *export_var, int len_name)
 	s->env = tmp;
 }
 
-void    blt_export(t_minishell *s)
+void	blt_export(t_minishell *s)
 {
 	int i;
 	int j;
