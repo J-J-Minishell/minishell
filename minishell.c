@@ -12,11 +12,11 @@
 
 
 // valgrind --leak-check=full \
-//			--show-leak-kinds=all \
-//			--track-origins=yes \
-//			--verbose \
-//			--log-file=valgrind-out.txt \
-//			./minishell
+// 			--show-leak-kinds=all \
+// 			--track-origins=yes \
+// 			--verbose \
+// 			--log-file=valgrind-out.txt \
+// 			./minishell
 
 #include "minishell.h"
 
@@ -43,6 +43,7 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 {
 	int		i;
 	int		n;
+
 	n = 0;
 	while (envp[n])									// Count number of environment variables
 		n++;
@@ -52,6 +53,8 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 	while (++i < n)
 		s->env[i] = ft_strdup(envp[i]);				// Copying external env. variables to my local env variable
 	s->env[i] = NULL;
+	i = ft_find_env_var(s, "HOME=");
+	s->home = i >= 0 ? ft_strdup(s->env[i]) : NULL;
 }
 
 void	ft_initialize_variables(t_minishell *s)

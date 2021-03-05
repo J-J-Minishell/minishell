@@ -25,6 +25,7 @@ typedef struct	s_minishell
 	char	*path;
 	char	*command_path;
 	char	**blt_cmds;
+	char	*home;
 }				t_minishell;
 
 void	export_env_var(t_minishell *s, char *export_var, int len_name);
