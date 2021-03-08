@@ -116,7 +116,7 @@ void	check_env_var(t_minishell *s)
 				double_q = !single_q && !double_q ? 1 : 0;
 			else if (s->tokens[i][j] == '\'')
 				single_q = !double_q && !single_q ? 1 : 0;
-			else if (s->tokens[i][j] == '$' && (ft_isalnum(s->tokens[i][j + 1]) || s->tokens[i][j + 1] == '=')
+			else if (s->tokens[i][j] == '$' && ft_isalpha(s->tokens[i][j + 1])	// isalpha
 				&& !single_q && (j == 0 || s->tokens[i][j - 1] != '\\'))
 			{
 				j += replace_env_var(s, i, j);

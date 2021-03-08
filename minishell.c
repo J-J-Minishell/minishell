@@ -41,8 +41,8 @@ int		main(int argc, char *argv[], char **envp)
 
 void	ft_get_env_variables(t_minishell *s, char **envp)
 {
-	int		i;
-	int		n;
+	int			i;
+	int			n;
 	n = 0;
 	while (envp[n])									// Count number of environment variables
 		n++;
@@ -63,6 +63,7 @@ void	ft_initialize_variables(t_minishell *s)
 	s->env_address = NULL;
 	s->path = NULL;
 	s->command_path = NULL;
+	s->exit_status = 0;
 	if (!(s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1))))
 		ft_print_error(s);
 	s->blt_cmds[0] = ft_strdup("echo");

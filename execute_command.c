@@ -1,17 +1,41 @@
 #include "minishell.h"
 
+/*
+** Function ft_execute_command() search if there is a command to execute in the
+** s->command_path. If there is not such command, print error and returns.
+** Other than that, creates a child process where tries to run the command using
+** execve() function. On succes execve() doesn't return. If there is an error,
+** errno is set, so error message can be printed.
+** Parent process wait until child process is done. And using WEXITSTATUS set
+** the return value from the command executed in the child process to be
+** consulted with "echo $?" command.
+*/
+
 void	ft_execute_command(t_minishell *s)
 {
 	pid_t	child_pid;
 	int		stat_loc;
 	char	*path;
+	int		ret;
 
-	//ft_get_path(s);    // Cambiado de sitio a la funcion ft_proccess_line
+	if (!s->command_path)
+	{
+		printf("%s: command not found\n", s->tokens[0]);
+		return ;
+	}
 	child_pid = fork();
 	if (child_pid < 0)
 		ft_print_error(s);
 	else if (child_pid == 0)
-		execve(s->command_path, s->tokens, s->env);
+	{
+		ret = execve(s->command_path, s->tokens, s->env);
+		if (ret == -1)
+			ft_print_error(s);
+	}
 	else
+	{
 		waitpid(child_pid, &stat_loc, WUNTRACED);
+		s->exit_status = WEXITSTATUS(stat_loc);
+		//printf("Exit: %i\n", s->exit_status);
+	}
 }
