@@ -20,11 +20,11 @@ int		len_env_var(t_minishell *s, char *str)
 	char	*name;
 	char	*tmp;
 
-	i = str[0] == '=' ? 1 : 0;
+	i = 0;
 	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
 	len = i + 1;
-	tmp = str[0] == '=' ? ft_substr(str, 1, i) : ft_substr(str, 0, i);
+	tmp = ft_substr(str, 0, i);
 	name = ft_strjoin(tmp, "=");
 	tmp = ft_free_ptr(tmp);
 	i = ft_find_env_var(s, name);
@@ -75,8 +75,9 @@ int		replace_env_var(t_minishell *s, int i, int j)
 		j++;
 		while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && s->tokens[i][j] != ' ' && s->tokens[i][j] != '$')
 			j++;
-		token = ft_strjoin(tmp, ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i])));
+		token = ft_strjoin(tmp, tmp2 = ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i]) - j));
 		tmp = ft_free_ptr(tmp);
+		tmp2 = ft_free_ptr(tmp2);
 		s->tokens[i] = ft_free_ptr(s->tokens[i]);
 		s->tokens[i] = token;
 		return (-1);

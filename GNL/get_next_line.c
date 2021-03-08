@@ -27,6 +27,8 @@ int		next_line(char **text, char **line)
 		tmp = ft_strdup(&(*text)[i + 1]);
 		free(*text);
 		*text = tmp;
+		if ((*text)[0] == '\0')
+			*text =	ft_free_ptr(*text);
 	}
 	else
 	{
@@ -54,13 +56,13 @@ int		check(int fd, int t_read, char **text, char **line)
 int		get_next_line(int fd, char **line)
 {
 	int				t_read;
-	char			buff[201];
+	char			buff[2];
 	static char		*text[4096];
 	char			*tmp;
 
 	if (fd < 0 || !line || BUFFER_SIZE < 1 || read(fd, buff, 0) < 0)
 		return (-1);
-	while ((t_read = read(fd, buff, 200)) > 0)
+	while ((t_read = read(fd, buff, 1)) > 0)
 	{
 		buff[t_read] = '\0';
 		if (text[fd] == NULL)

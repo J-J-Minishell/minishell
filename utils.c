@@ -34,6 +34,7 @@ void	ft_clean_up(t_minishell *s)
 		s->line = ft_free_ptr(s->line);
 	if (s->path != NULL)
 		s->path = ft_free_ptr(s->path);
+	s->home = ft_free_ptr(s->home);
 	s->env = ft_free_matrix(s->env);
 	s->commands = ft_free_matrix(s->commands);
 	s->tokens = ft_free_matrix(s->tokens);

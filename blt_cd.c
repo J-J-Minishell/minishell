@@ -37,11 +37,9 @@ void	special_chars_cd(t_minishell *s)
 	{
 		i = ft_find_env_var(s, "HOME=");
 		if (i >= 0)
-		{
 			tmp = ft_strjoin(s->env[i] + 5, s->tokens[1] + 1);
-			free(s->tokens[1]);
-			s->tokens[1] = tmp;
-		}
+		free(s->tokens[1]);
+		s->tokens[1] = i >= 0 ? tmp : ft_strdup(s->home);
 	}
 	else if (s->tokens[1][0] == '-')
 	{
@@ -53,27 +51,9 @@ void	special_chars_cd(t_minishell *s)
 			ft_putstr_fd(s->tokens[1], 0);
 			write (0, "\n", 1);
 		}
+		else
+			ft_putstr_fd("-bash: cd: OLDPWD not set", 0);
 	}
-}
-
-int		check_arguments(t_minishell *s)
-{
-	int i;
-
-	i = 1;
-	while (s->tokens[i])
-		i++;
-	if (i >= 4)
-		ft_putstr_fd("cd: too many arguments\n", 0);
-	else if (i == 3)
-	{
-		ft_putstr_fd("cd: string not in pwd: ", 0);
-		ft_putstr_fd(s->tokens[1], 0);
-		write (0, "\n", 1);
-	}
-	else
-		return (0);
-	return (1);
 }
 
 void	blt_cd(t_minishell *s)
@@ -82,15 +62,14 @@ void	blt_cd(t_minishell *s)
 
 	if (s->tokens[1])
 	{
-		if (check_arguments(s))
-			return ;
 		special_chars_cd(s);
 		if (chdir(s->tokens[1]) == 0)
 			change_pwd(s);
 		else
 		{
-			ft_putstr_fd("cd: no such file or directory: ", 0);
+			ft_putstr_fd("-bash: cd: ", 0);
 			ft_putstr_fd(s->tokens[1], 0);
+			ft_putstr_fd(": No such file or directory", 0);
 			write (0, "\n", 1);
 		}
 	}
