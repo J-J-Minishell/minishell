@@ -28,6 +28,18 @@ void	ft_process_tokken(t_minishell *s)
 		ft_execute_command(s);
 }
 
+/*
+** Function ft_process_line() receives the line written on the terminal and
+** take care of the steps needed in order to execute all the commands.
+** First of all, it splits the line into the different commands separated by
+** the ';' character. Then process, one by one, every command.
+** For each command follow the next steps. First, it split the command into
+** tokens. Then get variable expansion done through the function
+** check_env_var(). The next step it would be get all the paths where the
+** commands should be searched for. And finally, try to execute the command.
+** To get closed, function frees the variables that should be freed.
+*/
+
 void	ft_process_line(t_minishell *s)
 {
 	int i;
@@ -38,10 +50,10 @@ void	ft_process_line(t_minishell *s)
 	{
 		s->tokens = special_split(s->commands[i], ' ');
 		check_env_var(s);
-		ft_get_path(s);	// Cambiado por error al liberar command_path dos lineas mas abajo ya que se libera en cada vuelta del while pero solo se reservaba cuando no era blt
+		ft_get_path(s);
 		ft_process_tokken(s);
 		s->command_path = ft_free_ptr(s->command_path);
-		s->path = ft_free_ptr(s->path); // Anadido
+		s->path = ft_free_ptr(s->path);
 		s->tokens = ft_free_matrix(s->tokens);
 		i++;
 	}
