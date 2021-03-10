@@ -10,6 +10,7 @@ void	blt_pwd(t_minishell *s)
 		ft_putstr_fd(s->env[i] + 4, 0);
 		write(1, "\n", 1);
 	}
+	s->exit_status = 0;
 }
 
 //

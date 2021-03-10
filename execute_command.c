@@ -21,6 +21,7 @@ void	ft_execute_command(t_minishell *s)
 	if (!s->command_path)
 	{
 		printf("%s: command not found\n", s->tokens[0]);
+		s->exit_status = 127;
 		return ;
 	}
 	child_pid = fork();

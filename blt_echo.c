@@ -46,15 +46,7 @@ void	cmd_echo(t_minishell *s)
 			if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
 				j = quotes(s, i, j);
 			else
-			{
-				if (s->tokens[i][j + 1] == '?')
-				{
-					ft_putnbr_fd(s->exit_status, 1);
-					break ;
-				}
-				else
-					write(1, s->tokens[i] + j, 1);
-			}
+				write(1, s->tokens[i] + j, 1);
 			j++;
 		}
 		if (j && s->tokens[i + 1])
@@ -63,4 +55,5 @@ void	cmd_echo(t_minishell *s)
 	}
 	if (newline)
 		write(1, "\n", 1);
+	s->exit_status = 0;
 }

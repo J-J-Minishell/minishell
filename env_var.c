@@ -36,6 +36,23 @@ int		len_env_var(t_minishell *s, char *str)
 	return (0);
 }
 
+void	wrong_env_var(t_minishell *s, int i, int j)
+{
+	char	*token;
+	char	*tmp;
+	char	*tmp2;
+
+	tmp = ft_substr(s->tokens[i], 0, j);
+	j++;
+	while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && s->tokens[i][j] != ' ' && s->tokens[i][j] != '$')
+		j++;
+	token = ft_strjoin(tmp, tmp2 = ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i]) - j));
+	tmp = ft_free_ptr(tmp);
+	tmp2 = ft_free_ptr(tmp2);
+	s->tokens[i] = ft_free_ptr(s->tokens[i]);
+	s->tokens[i] = token;
+}
+
 /*
 ** This function receives (in addition to the struct) the token number, and the
 ** number that corresponds to the '$' char position inside the token. And after
@@ -58,6 +75,11 @@ int		replace_env_var(t_minishell *s, int i, int j)
 	char	*tmp2;
 
 	len = len_env_var(s, &s->tokens[i][j + 1]);
+	if (len == 0 && s->tokens[i][j + 1] == '?')
+	{
+		len = 2;
+		s->env_address = ft_itoa(s->exit_status);
+	}
 	if (len)
 	{
 		tmp = ft_strjoin((tmp2 = ft_substr(s->tokens[i], 0, j)), s->env_address);
@@ -70,18 +92,8 @@ int		replace_env_var(t_minishell *s, int i, int j)
 		return (ft_strlen(s->env_address) - 1);
 	}
 	else
-	{
-		tmp = ft_substr(s->tokens[i], 0, j);
-		j++;
-		while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && s->tokens[i][j] != ' ' && s->tokens[i][j] != '$')
-			j++;
-		token = ft_strjoin(tmp, tmp2 = ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i]) - j));
-		tmp = ft_free_ptr(tmp);
-		tmp2 = ft_free_ptr(tmp2);
-		s->tokens[i] = ft_free_ptr(s->tokens[i]);
-		s->tokens[i] = token;
-		return (-1);
-	}
+		wrong_env_var(s, i, j);
+	return (-1);
 }
 
 /*
@@ -105,7 +117,7 @@ void	check_env_var(t_minishell *s)
 	int		single_q;
 	int		double_q;
 
-	i = 1;
+	i = 0;
 	while (s->tokens[i])
 	{
 		j = 0;
@@ -117,7 +129,7 @@ void	check_env_var(t_minishell *s)
 				double_q = !single_q && !double_q ? 1 : 0;
 			else if (s->tokens[i][j] == '\'')
 				single_q = !double_q && !single_q ? 1 : 0;
-			else if (s->tokens[i][j] == '$' && ft_isalpha(s->tokens[i][j + 1])	// isalpha
+			else if (s->tokens[i][j] == '$' && (ft_isalpha(s->tokens[i][j + 1]) ||  s->tokens[i][j + 1] == '_' || s->tokens[i][j + 1] == '?')	// isalpha
 				&& !single_q && (j == 0 || s->tokens[i][j - 1] != '\\'))
 			{
 				j += replace_env_var(s, i, j);
@@ -127,4 +139,5 @@ void	check_env_var(t_minishell *s)
 		}
 		i++;
 	}
+	s->exit_status = 0;
 }

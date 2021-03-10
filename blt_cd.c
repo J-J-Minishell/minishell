@@ -25,6 +25,7 @@ void	change_pwd(t_minishell *s)
 		}
 		s->env[i] = ft_strjoin("PWD=", buf);
 		buf = ft_free_ptr(buf);
+		s->exit_status = 0;
 	}
 }
 
@@ -71,6 +72,7 @@ void	blt_cd(t_minishell *s)
 			ft_putstr_fd(s->tokens[1], 0);
 			ft_putstr_fd(": No such file or directory", 0);
 			write (0, "\n", 1);
+			s->exit_status = 1;
 		}
 	}
 	else

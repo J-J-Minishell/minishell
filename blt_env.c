@@ -11,4 +11,5 @@ void	blt_env(t_minishell *s)
 		write(1, "\n", 1);
 		i++;
 	}
+	s->exit_status = 0;
 }
