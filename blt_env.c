@@ -7,8 +7,8 @@ void	blt_env(t_minishell *s)
 	i = 0;
 	while (s->env[i])
 	{
-		ft_putstr_fd( s->env[i], 0);
-		write(1, "\n", 1);
+		ft_putstr_fd(s->env[i], s->fd);
+		write(s->fd, "\n", 1);
 		i++;
 	}
 	s->exit_status = 0;

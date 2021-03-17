@@ -14,7 +14,7 @@ int		quotes(t_minishell *s, int i, int j)
 		single_q = s->tokens[i][j] == '\'' ? 0 : single_q;
 
 		if (double_q || single_q)
-			write(1, s->tokens[i] + j, 1);
+			write(s->fd, s->tokens[i] + j, 1);
 	}
 	return (j);
 }
@@ -46,14 +46,14 @@ void	cmd_echo(t_minishell *s)
 			if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
 				j = quotes(s, i, j);
 			else
-				write(1, s->tokens[i] + j, 1);
+				write(s->fd, s->tokens[i] + j, 1);
 			j++;
 		}
 		if (j && s->tokens[i + 1])
-			write(1, " ", 1);
+			write(s->fd, " ", 1);
 		i++;
 	}
 	if (newline)
-		write(1, "\n", 1);
+		write(s->fd, "\n", 1);
 	s->exit_status = 0;
 }
