@@ -29,6 +29,16 @@ void	ft_execute_command(t_minishell *s)
 		ft_print_error(s);
 	else if (child_pid == 0)
 	{
+		if (s->fd != 1)
+		{
+			dup2(s->fd, STDOUT_FILENO);
+			close(s->fd);
+		}
+		if (s->fdi != 0)
+		{
+			dup2(s->fdi, STDIN_FILENO);
+			close(s->fdi);
+		}
 		ret = execve(s->command_path, s->tokens, s->env);
 		if (ret == -1)
 			ft_print_error(s);
@@ -37,6 +47,5 @@ void	ft_execute_command(t_minishell *s)
 	{
 		waitpid(child_pid, &stat_loc, WUNTRACED);
 		s->exit_status = WEXITSTATUS(stat_loc);
-		//printf("Exit: %i\n", s->exit_status);
 	}
 }

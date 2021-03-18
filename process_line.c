@@ -2,7 +2,7 @@
 
 void	ft_process_tokken(t_minishell *s)
 {
-	int i;
+	int 	i;
 
 	i = 0;
 	while (i < 7 && ft_strncmp(s->tokens[0], s->blt_cmds[i], ft_strlen(s->blt_cmds[i])) != 0)
@@ -55,10 +55,37 @@ void	delete_redirections(t_minishell *s, int redirections, int i)
 	s->tokens = tokens;
 }
 
+void	delete_in_redirections(t_minishell *s, int redirections, int i)
+{
+	char	**tokens;
+	int		len;
+	int		j;
+
+	len = i - (redirections * 2);
+	if (!(tokens = (char **)malloc(sizeof(char *) * (len + 1))))
+		ft_print_error(s);
+	i = 0;
+	j = 0;
+	while (s->tokens[i])
+	{
+		if (!ft_strncmp(s->tokens[i], "<", 2))
+			i += 2;
+		else
+		{
+			tokens[j] = ft_strdup(s->tokens[i]);
+			j++;
+			i++;
+		}
+	}
+	tokens[j] = NULL;
+	s->tokens = ft_free_matrix(s->tokens);
+	s->tokens = tokens;
+}
+
 void	check_redirections(t_minishell *s)
 {
-	int	i;
-	int	redirections;
+	int		i;
+	int		redirections;
 
 	redirections = 0;
 	i = 0;
@@ -83,6 +110,27 @@ void	check_redirections(t_minishell *s)
 		delete_redirections(s, redirections, i);
 }
 
+void	check_in_redirections(t_minishell *s)
+{
+	int		i;
+	int		redirections;
+
+	redirections = 0;
+	i = 0;
+	s->fdi = 0;
+	while (s->tokens[i])
+	{
+		if (ft_strncmp(s->tokens[i], "<", 2) == 0)
+		{
+			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
+			redirections++;
+		}
+		i++;
+	}
+	if (redirections)
+		delete_in_redirections(s, redirections, i);
+}
+
 /*
 ** Function ft_process_line() receives the line written on the terminal and
 ** take care of the steps needed in order to execute all the commands.
@@ -97,7 +145,7 @@ void	check_redirections(t_minishell *s)
 
 void	ft_process_line(t_minishell *s)
 {
-	int i;
+	int 	i;
 
 	s->commands = special_split(s->line, ';');
 	i = 0;
@@ -106,6 +154,7 @@ void	ft_process_line(t_minishell *s)
 		s->tokens = special_split(s->commands[i], ' ');
 		check_env_var(s);
 		ft_get_path(s);
+		check_in_redirections(s);
 		check_redirections(s);
 		ft_process_tokken(s);
 		if (s->fd != 1)

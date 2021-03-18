@@ -28,6 +28,7 @@ typedef struct	s_minishell
 	int		exit_status;
 	char	*home;
 	int		fd;
+	int		fdi;
 }				t_minishell;
 
 void	export_env_var(t_minishell *s, char *export_var, int len_name);
