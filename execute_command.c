@@ -24,6 +24,7 @@ void	ft_execute_command(t_minishell *s)
 		s->exit_status = 127;
 		return ;
 	}
+	signal(SIGINT, child_sig_handler);
 	child_pid = fork();
 	if (child_pid < 0)
 		ft_print_error(s);
@@ -48,4 +49,10 @@ void	ft_execute_command(t_minishell *s)
 		waitpid(child_pid, &stat_loc, WUNTRACED);
 		s->exit_status = WEXITSTATUS(stat_loc);
 	}
+}
+
+void	child_sig_handler(int sig)
+{
+	if (sig == SIGINT)
+		write(2, "\n", 1);
 }

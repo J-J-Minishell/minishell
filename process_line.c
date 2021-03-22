@@ -117,7 +117,6 @@ void	check_in_redirections(t_minishell *s)
 
 	redirections = 0;
 	i = 0;
-	s->fdi = 0;
 	while (s->tokens[i])
 	{
 		if (ft_strncmp(s->tokens[i], "<", 2) == 0)

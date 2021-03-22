@@ -65,6 +65,8 @@ void	blt_pwd(t_minishell *s);
 void	blt_cd(t_minishell *s);
 void	ft_update_pwd(t_minishell *s);
 
+void	child_sig_handler(int sig);
+
 # define TRUE 1
 # define FALSE 0
 # define INPUT_BUFFER_SIZE 5

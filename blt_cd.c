@@ -57,6 +57,19 @@ void	special_chars_cd(t_minishell *s)
 	}
 }
 
+/*
+** The function blt_cd() implements the built-in command 'cd' in our program.
+** It has two main blocks. One that takes care of those cases in which there is
+** no arguments, changing the work path to the HOME directory. And the other,
+** that takes care of the rest of the cases.
+** When there are arguments, the function first checks for special ones, like
+** '~' that changes to HOME directory, or '-' that changes to the previous
+** directory in case there is one. Function special_chars_cd() changes token
+** with the special character for the corresponding path.
+** Then only remains execute the system function chdir() to get the job done
+** with the new working directory in place, and check for errors.
+*/
+
 void	blt_cd(t_minishell *s)
 {
 	int		i;

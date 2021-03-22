@@ -26,12 +26,8 @@ static void	sig_handler(int sig)
 
 	if (sig == SIGINT)
 	{
-	//	getcwd(cwd, 4096);
-	//	ft_putstr_fd("\033[2D\033[0K", 2);
 		write(1, "\n", 1);
-		write(1, "$s> ", 3);
-	//	write(2, "\r\033[1;31mminishell@PARMART-JSERRAN\033[0;0m", 39);
-	//	ft_putstrs_fd(":\033[1;34m", cwd, "\033[0;0m$ ", 2);
+		write(1, "$> ", 3);
 	}
 
 }
