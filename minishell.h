@@ -55,7 +55,8 @@ char	*ft_get_current_command(t_minishell *s);
 void	ft_execute_command(t_minishell *s);
 
 void	ft_get_path(t_minishell *s);
-void	ft_get_env_path(t_minishell *s);
+void	ft_rel_back_path(t_minishell *s);
+void		ft_abs_or_rel_path(t_minishell *s);
 char	*ft_check_dir(t_minishell *s, char **paths);
 
 void	blt_env(t_minishell *s);

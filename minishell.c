@@ -22,14 +22,11 @@
 
 static void	sig_handler(int sig)
 {
-	char cwd[4097];
-
 	if (sig == SIGINT)
 	{
 		write(1, "\n", 1);
 		write(1, "$> ", 3);
 	}
-
 }
 
 int		main(int argc, char *argv[], char **envp)

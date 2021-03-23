@@ -15,14 +15,19 @@ void	ft_get_path(t_minishell *s)
 	char	*complete_path;
 	char	*temp;
 
-	s->path = ft_get_env_var_content(s, "PATH");
-	//ft_get_env_path(s);
-	paths = ft_split(s->path, ':');
-	temp = ft_check_dir(s, paths);
-	complete_path = ft_strjoin(temp, "/");
-	paths = ft_free_matrix(paths);
-	s->command_path = ft_strjoin(complete_path, s->tokens[0]);
-	complete_path = ft_free_ptr(complete_path);
+	if (s->tokens[0][0] == '.' || s->tokens[0][0] == '/')
+		ft_abs_or_rel_path(s);
+	else
+	{
+		s->path = ft_get_env_var_content(s, "PATH");
+		//ft_get_env_path(s);
+		paths = ft_split(s->path, ':');
+		temp = ft_check_dir(s, paths);
+		complete_path = ft_strjoin(temp, "/");
+		paths = ft_free_matrix(paths);
+		s->command_path = ft_strjoin(complete_path, s->tokens[0]);
+		complete_path = ft_free_ptr(complete_path);
+	}
 }
 
 /*
@@ -43,7 +48,8 @@ char	*ft_check_dir(t_minishell *s, char **paths)
 		dir = opendir(*paths);
 		while ((sd = readdir(dir)))
 		{
-			if (!(ft_strncmp(sd->d_name, s->tokens[0], (strlen(s->tokens[0]) + 1))))
+			if (!(ft_strncmp(sd->d_name, s->tokens[0],
+				(strlen(s->tokens[0]) + 1))))
 			{
 				closedir(dir);
 				return(*paths);
@@ -55,27 +61,46 @@ char	*ft_check_dir(t_minishell *s, char **paths)
 	return (NULL);
 }
 
-// void	ft_get_env_path(t_minishell *s)
-// {
-// 	int		i;
-// 	int		j;
-// 	j = 0;
-// 	while ((s->env)[j])
-// 	{
-// 		if (!ft_strncmp("PATH=", (s->env)[j], 5))
-// 		{
-// 			if (!(s->path = malloc(ft_strlen((s->env)[j]) + 1)))
-// 				ft_print_error(s);
-// 			i = 0;
-// 			while (((s->env)[j])[i + 5] != '\0')
-// 			{
-// 				s->path[i] = ((s->env)[j])[i + 5];
-// 				i++;
-// 			}
-// 			s->path[i] = '\0';
-// 			break ;
-// 		}
-// 		else
-// 			j++;
-// 	}
-// }
+void		ft_rel_back_path(t_minishell *s)
+{
+	int		len;
+	int		i;
+	int		backsteps;
+	char	*pwd;
+	char	*tmp;
+
+	i = 0;
+	backsteps = 0;
+	while (ft_strnstr(s->tokens[0] + i, "../", 3))
+	{
+		backsteps++;
+		i += 3;
+	}
+	pwd = ft_get_env_var_content(s, "PWD");
+	len = ft_strlen(pwd);
+	while (backsteps > 0)
+	{
+		if (pwd[len - 1] == '/')
+			backsteps--;
+		len--;
+	}
+	tmp = ft_substr(pwd, 0, len + 1);
+	s->command_path = ft_strjoin(tmp, s->tokens[0] + i);
+	ft_free_ptr(tmp);
+	ft_free_ptr(pwd);
+}
+
+void		ft_abs_or_rel_path(t_minishell *s)
+{
+	char	*temp;
+
+	temp = ft_get_env_var_content(s, "PWD");
+	if (s->tokens[0][0] == '/')
+		s->command_path = ft_strdup(s->tokens[0]);
+	else if (s->tokens[0][0] == '.' && s->tokens[0][1] == '/')
+		s->command_path = ft_strjoin(temp, s->tokens[0] + 2);
+	else if (s->tokens[0][0] == '.' && s->tokens[0][1] == '.'
+		&& s->tokens[0][2] == '/')
+		ft_rel_back_path(s);
+	ft_free_ptr(temp);
+}
