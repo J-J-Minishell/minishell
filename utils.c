@@ -1,5 +1,64 @@
 #include "minishell.h"
 
+
+char	**add_new_pos_matrix(char **matrix, char *new)
+{
+	char	**tmp;
+	int		i;
+
+	i = 0;
+	while (matrix && matrix[i])
+		i++;
+	i++;
+	if (!(tmp = (char **)malloc(sizeof(char *) * (i + 1))))
+		return (NULL);
+	i = 0;
+	while (matrix && matrix[i])
+	{
+		tmp[i] = ft_strdup(matrix[i]);
+		i++;
+	}
+	tmp[i] = ft_strdup(new);
+	tmp[i + 1] = NULL;
+	if (matrix)
+		matrix = ft_free_matrix(matrix);
+	return (tmp);
+}
+
+char	**cpy_matrix(char **matrix, int size)
+{
+	char	**tmp;
+	int		i;
+
+	if (!matrix)
+		return (NULL);
+	if (!(tmp = (char **)malloc(sizeof(char *) * (size + 1))))
+		return (NULL);
+	i = 0;
+	while (matrix[i])
+	{
+		tmp[i] = ft_strdup(matrix[i]);
+		i++;
+	}
+	tmp[i] = NULL;
+	return (tmp);
+}
+
+int		ft_str_is_printable_ascii(char *s)
+{
+	int	i;
+
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i] >= 32 && s[i] <= 254)
+		i++;
+	if (s[i] == '\0')
+		return (1);
+	return (0);
+
+}
+
 int		ft_find_env_var(t_minishell *s, char *var)
 {
 	int	i;
@@ -40,6 +99,8 @@ void	ft_clean_up(t_minishell *s)
 		s->commands = ft_free_matrix(s->commands);
 	if (s->tokens != NULL)
 		s->tokens = ft_free_matrix(s->tokens);
+	if (s->history_cmds != NULL)
+		s->history_cmds = ft_free_matrix(s->history_cmds);
 	s->env = ft_free_matrix(s->env);
 	s->blt_cmds = ft_free_matrix(s->blt_cmds);
 }

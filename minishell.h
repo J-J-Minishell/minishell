@@ -13,6 +13,8 @@
 # include <stdio.h>
 # include <time.h>
 
+#include <termios.h>    //termios, TCSANOW, ECHO, ICANON
+
 # include "libft/libft.h"
 
 typedef struct	s_minishell
@@ -29,13 +31,21 @@ typedef struct	s_minishell
 	char	*home;
 	int		fd;
 	int		fdi;
+	char	**history_cmds;
+	int		n_cmds;
+	char	*new_hist_cmd;
 }				t_minishell;
+
+char	**add_new_pos_matrix(char **matrix, char *new);
+char	**cpy_matrix(char **matrix, int size);
+int		add_history_cmd(t_minishell *s, int index);
+int		choose_history_cmd(t_minishell *s, int len, int index);
+int		ft_str_is_printable_ascii(char *s);
 
 void	export_env_var(t_minishell *s, char *export_var, int len_name);
 void	check_env_var(t_minishell *s);
 void	cmd_echo(t_minishell *s);
 char	**special_split(char const *s, char c);
-int		get_next_line(int fd, char **line);
 
 void	ft_get_env_variables(t_minishell *s, char **envp);
 void	ft_initialize_variables(t_minishell *s);

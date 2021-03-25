@@ -20,6 +20,30 @@
 
 #include "minishell.h"
 
+void	change_terminal_termios(t_minishell *s)
+{
+	static struct termios oldt;
+	static struct termios newt;
+
+	/* tcgetattr obtiene la configuración actual del terminal
+	STDIN_FILENO se utiliza para escribir la configuración en oldt */
+	tcgetattr( STDIN_FILENO, &oldt);
+	/* se hace una copia de la configuración */
+	newt = oldt;
+
+	/* se deshabilita el flag ICANON */
+	newt.c_lflag &= ~(ICANON);          
+
+	/* se envia la nueva configuración a STDIN
+	usamos TCSANOW para modificar la configuración. */
+	tcsetattr( STDIN_FILENO, TCSANOW, &newt);
+
+	ft_read_line(s);
+
+	/* se restaura la configuración original */
+	tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+}
+
 static void	sig_handler(int sig)
 {
 	if (sig == SIGINT)
@@ -41,11 +65,11 @@ int		main(int argc, char *argv[], char **envp)
 	{
 		write(1, "$> ", 3);							// Print minishell prompt
 		signal(SIGINT, sig_handler);
-		ft_read_line(&s);							// Get the command line write by the user
+		change_terminal_termios(&s);
 		if (s.line[0] != '\0')
 			ft_process_line(&s);						// Procces and execute commands
 		if (s.line != NULL)
-			free(s.line);							// Freed 'line' between loop interactions
+			s.line = ft_free_ptr(s.line);				// Freed 'line' between loop interactions
 	}
 	return (0);
 }
@@ -78,6 +102,9 @@ void	ft_initialize_variables(t_minishell *s)
 	s->path = NULL;
 	s->command_path = NULL;
 	s->exit_status = 0;
+	s->n_cmds = 0;
+	s->history_cmds = NULL;
+	s->new_hist_cmd = NULL;
 	s->fd = 1;
 	if (!(s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1))))
 		ft_print_error(s);

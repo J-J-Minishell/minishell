@@ -1,34 +1,97 @@
 #include "minishell.h"
 
-void	signal_out(t_minishell *s)
+void	signal_out(t_minishell *s, char **tmp)
 {
-	ft_putstr_fd("\nlogout\n", 2);
+	if (tmp)
+		tmp = ft_free_matrix(tmp);
+	ft_putstr_fd("\033[2D\033[0K", 2);
+	ft_putstr_fd("logout\n", 2);
 	ft_clean_up(s);
 	exit(0);
 }
 
+void	delete_char(t_minishell *s)
+{
+	char	*tmp;
+
+	if (s->line && ft_strlen(s->line))
+	{
+		tmp = ft_substr(s->line, 0, ft_strlen(s->line) - 1);
+		free(s->line);
+		s->line = tmp;
+		ft_putstr_fd("\033[3D\033[0K", 2);
+	}
+	else
+		ft_putstr_fd("\033[2D\033[0K", 2);
+}
+
+void	add_char_to_line(t_minishell *s, char c)
+{
+	char	*tmp;
+	char	*str;
+
+	if (!(str = malloc(sizeof(char) * 1 + 1)))
+		ft_print_error(s);
+	str[0] = c;
+	str[1] = '\0';
+	if (!s->line && c != 127)
+		s->line = ft_strdup(str);
+	else if (c != 127)
+	{
+		tmp = ft_strjoin(s->line, str);
+		free(s->line);
+		s->line = tmp;
+	}
+	str = ft_free_ptr(str);
+}
+
+void	ft_read_line2(t_minishell *s, char **tmp, int index, char c)
+{
+	char	*tmp1;
+
+	if (index != s->n_cmds)
+	{
+		free(s->history_cmds[index]);
+		s->history_cmds[index] = ft_strdup(tmp[index]);
+		s->history_cmds = add_new_pos_matrix(s->history_cmds, s->line);
+		s->n_cmds++;
+	}
+	else if (!s->line && c == '\n')
+		s->line = ft_strdup("");
+	else
+	{
+		s->history_cmds = add_new_pos_matrix(s->history_cmds, s->line);
+		s->n_cmds++;
+	}
+	s->new_hist_cmd = ft_free_ptr(s->new_hist_cmd);
+	tmp1 = ft_strtrim(s->line, "; ");
+	free(s->line);
+	s->line = tmp1;
+}
+
 void	ft_read_line(t_minishell *s)
 {
-	char *tmp;
-	char *line_joined;
+	char	**tmp;
+	char	c;
+	int		index;
 
-	if (!get_next_line(0, &s->line))
-		signal_out(s);
-	while (1)
+	index = s->n_cmds;
+	tmp = cpy_matrix(s->history_cmds, s->n_cmds);
+	while (read(0, &c, 1) && c != '\n' && (c != 4 || s->line))
 	{
-		if (ft_strlen(s->line) && s->line[ft_strlen(s->line) - 1] == 92)
-		{
-			write(1, "\n> ", 3);
-			get_next_line(0, &tmp);
-			line_joined = ft_strjoin(s->line, tmp);
-			free(s->line);
-			free(tmp);
-			s->line = line_joined;
-		}
+		if (c == 4)
+			ft_putstr_fd("\033[2D\033[0K", 2);
 		else
-			break;
+			add_char_to_line(s, c);
+		index = choose_history_cmd(s, ft_strlen(s->line), index);
+		if (c == 127)
+			delete_char(s);
+		if (ft_str_is_printable_ascii(s->line))
+			index = add_history_cmd(s, index);
 	}
-	tmp = ft_strtrim(s->line, "; ");
-	free(s->line);
-	s->line = tmp;
+	if (c == 4)
+		signal_out(s, tmp);
+	ft_read_line2(s, tmp, index, c);
+	if (tmp)
+		tmp = ft_free_matrix(tmp);
 }

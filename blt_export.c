@@ -16,7 +16,6 @@ void	change_export_var(t_minishell *s, char *export_var, int i)
 
 void	export_env_var(t_minishell *s, char *export_var, int len_name)
 {
-	char	**tmp;
 	int		i;
 
 	i = 0;
@@ -26,19 +25,7 @@ void	export_env_var(t_minishell *s, char *export_var, int len_name)
 			return (change_export_var(s, export_var, i));
 		i++;
 	}
-	i++;
-	if (!(tmp = (char **)malloc(sizeof(char *) * i + 8)))
-		ft_print_error(s);
-	i = 0;
-	while (s->env[i])
-	{
-		tmp[i] = ft_strdup(s->env[i]);
-		i++;
-	}
-	tmp[i++] = ft_strdup(export_var);
-	tmp[i] = NULL;
-	s->env = ft_free_matrix(s->env);
-	s->env = tmp;
+	s->env = add_new_pos_matrix(s->env, export_var);
 }
 
 void	blt_export(t_minishell *s)
@@ -48,6 +35,7 @@ void	blt_export(t_minishell *s)
 	int		exit;
 
 	i = 1;
+	exit = 0;
 	while (s->tokens[i])
 	{
 		j = 0;
