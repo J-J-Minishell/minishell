@@ -14,11 +14,16 @@ void	delete_char(t_minishell *s)
 {
 	char	*tmp;
 
-	if (s->line && ft_strlen(s->line))
+	if (line && ft_strlen(line))
 	{
-		tmp = ft_substr(s->line, 0, ft_strlen(s->line) - 1);
-		free(s->line);
-		s->line = tmp;
+		if (ft_strlen(line) == 1)
+			line = ft_free_ptr(line);
+		else
+		{
+			tmp = ft_substr(line, 0, ft_strlen(line) - 1);
+			free(line);
+			line = tmp;
+		}
 		ft_putstr_fd("\033[3D\033[0K", 2);
 	}
 	else
@@ -34,13 +39,13 @@ void	add_char_to_line(t_minishell *s, char c)
 		ft_print_error(s);
 	str[0] = c;
 	str[1] = '\0';
-	if (!s->line && c != 127)
-		s->line = ft_strdup(str);
+	if (!line && c != 127)
+		line = ft_strdup(str);
 	else if (c != 127)
 	{
-		tmp = ft_strjoin(s->line, str);
-		free(s->line);
-		s->line = tmp;
+		tmp = ft_strjoin(line, str);
+		free(line);
+		line = tmp;
 	}
 	str = ft_free_ptr(str);
 }
@@ -53,20 +58,20 @@ void	ft_read_line2(t_minishell *s, char **tmp, int index, char c)
 	{
 		free(s->history_cmds[index]);
 		s->history_cmds[index] = ft_strdup(tmp[index]);
-		s->history_cmds = add_new_pos_matrix(s->history_cmds, s->line);
+		s->history_cmds = add_new_pos_matrix(s->history_cmds, line);
 		s->n_cmds++;
 	}
-	else if (!s->line && c == '\n')
-		s->line = ft_strdup("");
+	else if (!line && c == '\n')
+		line = ft_strdup("");
 	else
 	{
-		s->history_cmds = add_new_pos_matrix(s->history_cmds, s->line);
+		s->history_cmds = add_new_pos_matrix(s->history_cmds, line);
 		s->n_cmds++;
 	}
 	s->new_hist_cmd = ft_free_ptr(s->new_hist_cmd);
-	tmp1 = ft_strtrim(s->line, "; ");
-	free(s->line);
-	s->line = tmp1;
+	tmp1 = ft_strtrim(line, "; ");
+	free(line);
+	line = tmp1;
 }
 
 void	ft_read_line(t_minishell *s)
@@ -77,16 +82,18 @@ void	ft_read_line(t_minishell *s)
 
 	index = s->n_cmds;
 	tmp = cpy_matrix(s->history_cmds, s->n_cmds);
-	while (read(0, &c, 1) && c != '\n' && (c != 4 || s->line))
+	while (read(0, &c, 1) && c != '\n' && (c != 4 || line))
 	{
+		if (index != s->n_cmds && !line)
+			index = s->n_cmds;
 		if (c == 4)
 			ft_putstr_fd("\033[2D\033[0K", 2);
 		else
 			add_char_to_line(s, c);
-		index = choose_history_cmd(s, ft_strlen(s->line), index);
+		index = choose_history_cmd(s, ft_strlen(line), index);
 		if (c == 127)
 			delete_char(s);
-		if (ft_str_is_printable_ascii(s->line))
+		if (ft_str_is_printable_ascii(line))
 			index = add_history_cmd(s, index);
 	}
 	if (c == 4)

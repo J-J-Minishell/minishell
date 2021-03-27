@@ -17,11 +17,12 @@
 
 # include "libft/libft.h"
 
+char	*line;
+
 typedef struct	s_minishell
 {
 	char	*env_address;
 	char	**env;
-	char	*line;
 	char	**commands;
 	char	**tokens;
 	char	*path;

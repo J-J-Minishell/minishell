@@ -48,9 +48,13 @@ static void	sig_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
+		ft_putstr_fd("\033[2D\033[0K", 2);
 		write(1, "\n", 1);
 		write(1, "$> ", 3);
+		line = ft_free_ptr(line);
 	}
+	else if (sig == SIGQUIT)
+		ft_putstr_fd("\033[2D\033[0K", 2);
 }
 
 int		main(int argc, char *argv[], char **envp)
@@ -60,16 +64,16 @@ int		main(int argc, char *argv[], char **envp)
 	errno = 0;										// Set errno value to 0
 	ft_initialize_variables(&s);					// Initialice variables to NULL to freed them only if they have a real value
 	ft_get_env_variables(&s, envp);					// Save all environment variables
-	signal(SIGQUIT, sig_handler);
 	while (TRUE)
 	{
 		write(1, "$> ", 3);							// Print minishell prompt
+		signal(SIGQUIT, sig_handler);
 		signal(SIGINT, sig_handler);
 		change_terminal_termios(&s);
-		if (s.line[0] != '\0')
+		if (line[0] != '\0')
 			ft_process_line(&s);						// Procces and execute commands
-		if (s.line != NULL)
-			s.line = ft_free_ptr(s.line);				// Freed 'line' between loop interactions
+		if (line != NULL)
+			line = ft_free_ptr(line);				// Freed 'line' between loop interactions
 	}
 	return (0);
 }
@@ -94,7 +98,7 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 
 void	ft_initialize_variables(t_minishell *s)
 {
-	s->line = NULL;									// Initialize all this variables with NULL to setup a conditional free at...
+	line = NULL;									// Initialize all this variables with NULL to setup a conditional free at...
 	s->env = NULL;									// ...the end onĺy in case they now have a value
 	s->tokens = NULL;								//
 	s->commands = NULL;

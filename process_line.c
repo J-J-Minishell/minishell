@@ -146,7 +146,7 @@ void	ft_process_line(t_minishell *s)
 {
 	int 	i;
 
-	s->commands = special_split(s->line, ';');
+	s->commands = special_split(line, ';');
 	i = 0;
 	while (s->commands[i])
 	{

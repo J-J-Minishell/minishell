@@ -89,8 +89,8 @@ char	*ft_get_env_var_content(t_minishell *s, char *var)
 
 void	ft_clean_up(t_minishell *s)
 {
-	if (s->line != NULL)
-		s->line = ft_free_ptr(s->line);
+	if (line != NULL)
+		line = ft_free_ptr(line);
 	if (s->path != NULL)
 		s->path = ft_free_ptr(s->path);
 	if (s->home != NULL)

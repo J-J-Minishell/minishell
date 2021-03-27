@@ -20,11 +20,12 @@ void	ft_execute_command(t_minishell *s)
 
 	if (!s->command_path)
 	{
-		printf("%s: command not found\n", s->tokens[0]);
+		printf("-bash: %s: command not found\n", s->tokens[0]);
 		s->exit_status = 127;
 		return ;
 	}
 	signal(SIGINT, child_sig_handler);
+	signal(SIGQUIT, child_sig_handler);
 	child_pid = fork();
 	if (child_pid < 0)
 		ft_print_error(s);
@@ -55,4 +56,6 @@ void	child_sig_handler(int sig)
 {
 	if (sig == SIGINT)
 		write(2, "\n", 1);
+	else if (sig == SIGQUIT)
+		ft_putstr_fd("Quit: 3\n", 2);
 }
