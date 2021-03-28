@@ -1,17 +1,25 @@
 #include "minishell.h"
 
+void	export(t_minishell *s)
+{
+	int 	i;
+
+	i = 0;
+	while (s->env[i])
+	{
+		ft_putstr_fd("declare -x ", s->fd);
+		ft_putstr_fd(s->env[i], s->fd);
+		write(s->fd, "\n", 1);
+		i++;
+	}
+}
+
 int		print_export_error(char *token)
 {
 	ft_putstr_fd("-bash: export: '", 0);
 	ft_putstr_fd(token, 0);
 	ft_putstr_fd("': not a valid identifier\n", 0);
 	return (1);
-}
-
-void	change_export_var(t_minishell *s, char *export_var, int i)
-{
-	free(s->env[i]);
-	s->env[i] = ft_strdup(export_var);
 }
 
 void	export_env_var(t_minishell *s, char *export_var, int len_name)
@@ -22,10 +30,22 @@ void	export_env_var(t_minishell *s, char *export_var, int len_name)
 	while (s->env[i])
 	{
 		if (ft_strncmp(s->env[i], export_var, len_name) == 0)
-			return (change_export_var(s, export_var, i));
+		{
+			free(s->env[i]);
+			s->env[i] = ft_strdup(export_var);
+			return;
+		}
 		i++;
 	}
 	s->env = add_new_pos_matrix(s->env, export_var);
+}
+
+void	set_exit_status(t_minishell *s, int exit)
+{
+	if (exit)
+		s->exit_status = 1;
+	else
+		s->exit_status = 0;
 }
 
 void	blt_export(t_minishell *s)
@@ -35,6 +55,8 @@ void	blt_export(t_minishell *s)
 	int		exit;
 
 	i = 1;
+	if (!s->tokens[i])
+		export(s);
 	exit = 0;
 	while (s->tokens[i])
 	{
@@ -47,12 +69,8 @@ void	blt_export(t_minishell *s)
 				j++;
 			if (s->tokens[i][j] == '=')
 				export_env_var(s, s->tokens[i], j + 1);
-			exit = exit == 1 ? 1 : 0;
 		}
 		i++;
 	}
-	if (exit)
-		s->exit_status = 1;
-	else
-		s->exit_status = 0;
+	set_exit_status(s, exit);
 }

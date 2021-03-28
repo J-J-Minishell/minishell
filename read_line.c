@@ -94,7 +94,7 @@ void	ft_read_line(t_minishell *s)
 		if (c == 127)
 			delete_char(s);
 		if (ft_str_is_printable_ascii(line))
-			index = add_history_cmd(s, index);
+			add_history_cmd(s, index);
 	}
 	if (c == 4)
 		signal_out(s, tmp);

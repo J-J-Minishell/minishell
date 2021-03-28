@@ -39,7 +39,7 @@ typedef struct	s_minishell
 
 char	**add_new_pos_matrix(char **matrix, char *new);
 char	**cpy_matrix(char **matrix, int size);
-int		add_history_cmd(t_minishell *s, int index);
+void	add_history_cmd(t_minishell *s, int index);
 int		choose_history_cmd(t_minishell *s, int len, int index);
 int		ft_str_is_printable_ascii(char *s);
 
