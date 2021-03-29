@@ -6,7 +6,7 @@
 # include <string.h>
 # include <errno.h>
 # include <fcntl.h>
-# include <wait.h>
+# include <sys/wait.h>
 # include <signal.h>
 # include <dirent.h>
 
@@ -67,7 +67,7 @@ void	ft_execute_command(t_minishell *s);
 
 void	ft_get_path(t_minishell *s);
 void	ft_rel_back_path(t_minishell *s);
-void		ft_abs_or_rel_path(t_minishell *s);
+void	ft_abs_or_rel_path(t_minishell *s);
 char	*ft_check_dir(t_minishell *s, char **paths);
 
 void	blt_env(t_minishell *s);
@@ -78,6 +78,8 @@ void	blt_cd(t_minishell *s);
 void	ft_update_pwd(t_minishell *s);
 
 void	child_sig_handler(int sig);
+
+int		ft_counterbar_before_expansion(t_minishell *s, int i, int j);
 
 # define TRUE 1
 # define FALSE 0

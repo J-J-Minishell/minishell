@@ -152,9 +152,9 @@ void	ft_process_line(t_minishell *s)
 	{
 		s->tokens = special_split(s->commands[i], ' ');
 		check_env_var(s);
-		ft_get_path(s);
 		check_in_redirections(s);
 		check_redirections(s);
+		ft_get_path(s);
 		ft_process_tokken(s);
 		if (s->fd != 1)
 			close(s->fd);

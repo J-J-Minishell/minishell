@@ -123,7 +123,8 @@ void	*ft_free_matrix(char **matrix)
 
 void	ft_print_error(t_minishell *s)
 {
-	printf("Error: %s\n", strerror(errno));
+	//printf("Error: %s\n", strerror(errno));
+	printf("-bash: %s: %s\n", s->tokens[0], strerror(errno));
 	ft_clean_up(s);
 	exit(-1);
 }

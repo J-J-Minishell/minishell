@@ -129,8 +129,8 @@ void	check_env_var(t_minishell *s)
 				double_q = !single_q && !double_q ? 1 : 0;
 			else if (s->tokens[i][j] == '\'')
 				single_q = !double_q && !single_q ? 1 : 0;
-			else if (s->tokens[i][j] == '$' && (ft_isalpha(s->tokens[i][j + 1]) ||  s->tokens[i][j + 1] == '_' || s->tokens[i][j + 1] == '?')	// isalpha
-				&& !single_q && (j == 0 || s->tokens[i][j - 1] != '\\'))
+			else if (s->tokens[i][j] == '$' && (ft_isalpha(s->tokens[i][j + 1]) ||  s->tokens[i][j + 1] == '_' || s->tokens[i][j + 1] == '?'
+				|| s->tokens[i][j + 1] == '"') && !single_q && !ft_counterbar_before_expansion(s, i, j))
 			{
 				j += replace_env_var(s, i, j);
 				s->env_address = ft_free_ptr(s->env_address);
@@ -140,4 +140,16 @@ void	check_env_var(t_minishell *s)
 		i++;
 	}
 	s->exit_status = 0;
+}
+
+int			ft_counterbar_before_expansion(t_minishell *s, int i, int j)
+{
+	int		counterbar;
+
+	counterbar = 0;
+	while (j > 1 && s->tokens[i][--j] == '\\')
+		counterbar++;
+	if (counterbar % 2)
+		return (TRUE);
+	return (FALSE);
 }
