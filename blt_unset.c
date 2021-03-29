@@ -2,9 +2,18 @@
 
 int		print_unset_error(char *token)
 {
-	ft_putstr_fd("-bash: unset: '", 0);
-	ft_putstr_fd(token, 0);
+	char	*tmp;
+
+	tmp = ft_strdup(token);
+	if (token[0] == '"')
+	{
+		ft_free_ptr(tmp);
+		tmp = ft_strtrim(token, "\"");
+	}
+	ft_putstr_fd("-bash: export: `", 0);
+	ft_putstr_fd(tmp, 0);
 	ft_putstr_fd("': not a valid identifier\n", 0);
+	ft_free_ptr(tmp);
 	return (1);
 }
 

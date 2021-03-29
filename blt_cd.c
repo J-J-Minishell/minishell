@@ -55,6 +55,12 @@ void	special_chars_cd(t_minishell *s)
 		else
 			ft_putstr_fd("-bash: cd: OLDPWD not set", 0);
 	}
+	else if (s->tokens[1][0] == '"')
+	{
+		tmp = ft_strtrim(s->tokens[1], "\"");
+		ft_free_ptr(s->tokens[1]);
+		s->tokens[1] = tmp;
+	}
 }
 
 /*
