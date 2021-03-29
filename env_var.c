@@ -147,7 +147,7 @@ int			ft_counterbar_before_expansion(t_minishell *s, int i, int j)
 	int		counterbar;
 
 	counterbar = 0;
-	while (j > 1 && s->tokens[i][--j] == '\\')
+	while (j > 0 && s->tokens[i][--j] == '\\')
 		counterbar++;
 	if (counterbar % 2)
 		return (TRUE);
