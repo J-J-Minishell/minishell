@@ -103,13 +103,13 @@ void	ft_initialize_variables(t_minishell *s)
 	s->tokens = NULL;								//
 	s->commands = NULL;
 	s->env_address = NULL;
-	s->path = NULL;
 	s->command_path = NULL;
 	s->exit_status = 0;
 	s->n_cmds = 0;
 	s->history_cmds = NULL;
 	s->new_hist_cmd = NULL;
 	s->fd = 1;
+	s->fdi = 0;
 	if (!(s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1))))
 		ft_print_error(s);
 	s->blt_cmds[0] = ft_strdup("echo");

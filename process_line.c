@@ -28,106 +28,55 @@ void	ft_process_tokken(t_minishell *s)
 		ft_execute_command(s);
 }
 
-void	delete_redirections(t_minishell *s, int redirections, int i)
+int		ft_check_for_pipes(t_minishell *s, int i)
 {
-	char	**tokens;
-	int		len;
 	int		j;
 
-	len = i - (redirections * 2);
-	if (!(tokens = (char **)malloc(sizeof(char *) * (len + 1))))
-		ft_print_error(s);
-	i = 0;
-	j = 0;
-	while (s->tokens[i])
+	j = -1;
+	while (s->commands[i][++j] != '\0')
 	{
-		if (!ft_strncmp(s->tokens[i], ">", 2) || !ft_strncmp(s->tokens[i], ">>", 3))
-			i += 2;
-		else
-		{
-			tokens[j] = ft_strdup(s->tokens[i]);
-			j++;
-			i++;
-		}
+		if (s->commands[i][j] == '|')
+			return (TRUE);
 	}
-	tokens[j] = NULL;
-	s->tokens = ft_free_matrix(s->tokens);
-	s->tokens = tokens;
+	return (FALSE);
 }
 
-void	delete_in_redirections(t_minishell *s, int redirections, int i)
+void	ft_no_pipes(t_minishell *s, int i)
 {
-	char	**tokens;
-	int		len;
-	int		j;
-
-	len = i - (redirections * 2);
-	if (!(tokens = (char **)malloc(sizeof(char *) * (len + 1))))
-		ft_print_error(s);
-	i = 0;
-	j = 0;
-	while (s->tokens[i])
+	s->tokens = special_split(s->commands[i], ' ');
+	check_env_var(s);
+	check_redirections(s);
+	if (s->tokens[0])
 	{
-		if (!ft_strncmp(s->tokens[i], "<", 2))
-			i += 2;
-		else
-		{
-			tokens[j] = ft_strdup(s->tokens[i]);
-			j++;
-			i++;
-		}
+		ft_get_path(s);
+		ft_process_tokken(s);
+		s->tokens = ft_free_matrix(s->tokens);
 	}
-	tokens[j] = NULL;
-	s->tokens = ft_free_matrix(s->tokens);
-	s->tokens = tokens;
 }
 
-void	check_redirections(t_minishell *s)
+int		ft_double_semicolon_check(t_minishell *s)
 {
 	int		i;
-	int		redirections;
+	int		flag;
 
-	redirections = 0;
-	i = 0;
-	while (s->tokens[i])
+	flag = TRUE;
+	i = -1;
+	while (line[++i])
 	{
-		if (ft_strncmp(s->tokens[i], ">", 2) == 0)
+		if (line[i] == ';' && flag == TRUE)
 		{
-			s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_TRUNC, 0666);
-			redirections++;
+			printf("-bash: syntax error near unexpected token `;'\n");
+			s->exit_status = 258;
+			return (TRUE);
 		}
-		else if (ft_strncmp(s->tokens[i], ">>", 3) == 0)
-		{
-			s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_APPEND, 0666);
-			redirections++;
-		}
-		i++;
-		if (s->fd != 1 && s->tokens[i] && (!ft_strncmp(s->tokens[i], ">", 2) ||
-			!ft_strncmp(s->tokens[i], ">>", 3)))
-			close(s->fd);
+		else if (line[i] == ';' && flag == FALSE)
+			flag = TRUE;
+		else if (line[i] == ' ')
+			continue ;
+		else
+			flag = FALSE;
 	}
-	if (redirections)
-		delete_redirections(s, redirections, i);
-}
-
-void	check_in_redirections(t_minishell *s)
-{
-	int		i;
-	int		redirections;
-
-	redirections = 0;
-	i = 0;
-	while (s->tokens[i])
-	{
-		if (ft_strncmp(s->tokens[i], "<", 2) == 0)
-		{
-			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
-			redirections++;
-		}
-		i++;
-	}
-	if (redirections)
-		delete_in_redirections(s, redirections, i);
+	return (FALSE);
 }
 
 /*
@@ -141,29 +90,28 @@ void	check_in_redirections(t_minishell *s)
 ** commands should be searched for. And finally, try to execute the command.
 ** To get closed, function frees the variables that should be freed.
 */
-
 void	ft_process_line(t_minishell *s)
 {
-	int 	i;
+	int		i;
 
+	if (ft_double_semicolon_check(s))
+		return ;
 	s->commands = special_split(line, ';');
-	i = 0;
-	while (s->commands[i])
+	i = -1;
+	while (s->commands[++i])
 	{
-		s->tokens = special_split(s->commands[i], ' ');
-		check_env_var(s);
-		check_in_redirections(s);
-		check_redirections(s);
-		ft_get_path(s);
-		ft_process_tokken(s);
-		if (s->fd != 1)
-			close(s->fd);
-		s->fd = 1;
-		s->command_path = ft_free_ptr(s->command_path);
-		s->path = ft_free_ptr(s->path);
-		s->tokens = ft_free_matrix(s->tokens);
-		i++;
+		if (ft_check_for_pipes(s, i))
+		{
+			s->pipe_commands = special_split(s->commands[i], '|');
+			ft_pipes(s);
+			s->pipe_commands = ft_free_matrix(s->pipe_commands);
+		}
+		else
+			ft_no_pipes(s, i);
 	}
+	if (s->fd != 1)
+		close(s->fd);
+	s->fd = 1;
 	s->commands = ft_free_matrix(s->commands);
+	s->command_path = ft_free_ptr(s->command_path);
 }
-

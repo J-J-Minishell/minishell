@@ -35,7 +35,13 @@ typedef struct	s_minishell
 	char	**history_cmds;
 	int		n_cmds;
 	char	*new_hist_cmd;
+	char	**pipe_commands;
+
 }				t_minishell;
+
+void	check_redirections(t_minishell *s);
+void	ft_pipes(t_minishell *s);
+void	ft_process_tokken(t_minishell *s);
 
 char	**add_new_pos_matrix(char **matrix, char *new);
 char	**cpy_matrix(char **matrix, int size);

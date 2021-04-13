@@ -14,19 +14,21 @@ void	ft_get_path(t_minishell *s)
 	char	**paths;
 	char	*complete_path;
 	char	*temp;
+	char	*path;
 
-	if (s->tokens[0][0] == '.' || s->tokens[0][0] == '/')
+	if (s->tokens[0] && (s->tokens[0][0] == '.' || s->tokens[0][0] == '/'))
 		ft_abs_or_rel_path(s);
 	else
 	{
-		s->path = ft_get_env_var_content(s, "PATH");
+		path = ft_get_env_var_content(s, "PATH");
 		//ft_get_env_path(s);
-		paths = ft_split(s->path, ':');
+		paths = ft_split(path, ':');
 		temp = ft_check_dir(s, paths);
 		complete_path = ft_strjoin(temp, "/");
 		paths = ft_free_matrix(paths);
 		s->command_path = ft_strjoin(complete_path, s->tokens[0]);
 		complete_path = ft_free_ptr(complete_path);
+		path = ft_free_ptr(path);
 	}
 }
 

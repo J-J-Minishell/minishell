@@ -35,7 +35,7 @@ char	**cpy_matrix(char **matrix, int size)
 	if (!(tmp = (char **)malloc(sizeof(char *) * (size + 1))))
 		return (NULL);
 	i = 0;
-	while (matrix[i])
+	while (matrix[i] && i < size)
 	{
 		tmp[i] = ft_strdup(matrix[i]);
 		i++;
@@ -91,8 +91,6 @@ void	ft_clean_up(t_minishell *s)
 {
 	if (line != NULL)
 		line = ft_free_ptr(line);
-	if (s->path != NULL)
-		s->path = ft_free_ptr(s->path);
 	if (s->home != NULL)
 		s->home = ft_free_ptr(s->home);
 	if (s->commands != NULL)
@@ -123,8 +121,7 @@ void	*ft_free_matrix(char **matrix)
 
 void	ft_print_error(t_minishell *s)
 {
-	//printf("Error: %s\n", strerror(errno));
-	printf("-bash: %s: %s\n", s->tokens[0], strerror(errno));
+	printf("Error: %s\n", strerror(errno));
 	ft_clean_up(s);
 	exit(-1);
 }
