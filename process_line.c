@@ -41,9 +41,36 @@ int		ft_check_for_pipes(t_minishell *s, int i)
 	return (FALSE);
 }
 
-void	ft_no_pipes(t_minishell *s, int i)
+int		check_double_redirection_marks(t_minishell *s)
+{
+	int 	i;
+
+	i = -1;
+	while(s->tokens[++i])
+	{
+		if (s->tokens[i][0] == '>' &&  s->tokens[i][1] == '<')
+		{
+			printf("-bash: syntax error near unexpected token `<'\n");
+			s->exit_status = 258;
+			return (TRUE);
+		}
+		else if ((s->tokens[i][0] == '>' || s->tokens[i][0] == '<') && (s->tokens[i + 1][0] == '>' || s->tokens[i + 1][0] == '<'))
+		{
+			if (s->tokens[i + 1][0] == '>')
+				printf("-bash: syntax error near unexpected token `>'\n");
+			else
+				printf("-bash: syntax error near unexpected token `<'\n");
+			s->exit_status = 258;
+			return (TRUE);
+		}
+	}
+}
+
+int		ft_no_pipes(t_minishell *s, int i)
 {
 	s->tokens = special_split(s->commands[i], ' ');
+	if (check_double_redirection_marks(s))
+		return (TRUE);
 	check_env_var(s);
 	check_redirections(s);
 	if (s->tokens[0])
@@ -52,6 +79,7 @@ void	ft_no_pipes(t_minishell *s, int i)
 		ft_process_tokken(s);
 		s->tokens = ft_free_matrix(s->tokens);
 	}
+	return (FALSE);
 }
 
 int		ft_double_semicolon_check(t_minishell *s)
@@ -79,6 +107,44 @@ int		ft_double_semicolon_check(t_minishell *s)
 	return (FALSE);
 }
 
+void	get_redirection_marks_apart()
+{
+	int		i;
+	char	*tmp;
+	int		len;
+
+	i = -1;
+	while (line[++i])
+	{
+		if ((line[i] == '<' || line[i] == '>') && i > 0 && (line[i - 1] != '<' && line[i - 1] != '>' && line[i - 1] != ' '))
+		{
+			len = ft_strlen(line);
+			tmp = malloc(len + 2);
+			ft_memmove(tmp, line, i);
+			tmp[i] = ' ';
+			ft_memmove(tmp + i + 1, &line[i], len - i);
+			tmp[len + 2] = '\0';
+			printf("%s\n", tmp);
+			free(line);
+			line = tmp;
+			i = -1;
+		}
+		else if ((line[i] == '<' || line[i] == '>') && (line[i + 1] != '<' && line[i + 1] != '>' && line[i + 1] != ' '))
+		{
+			len = ft_strlen(line);
+			tmp = malloc(len + 2);
+			ft_memmove(tmp, line, i + 1);
+			tmp[i + 1] = ' ';
+			ft_memmove(tmp + i + 2, &line[i + 1], len - (i + 1));
+			tmp[len + 2] = '\0';
+			printf("%s\n", tmp);
+			free(line);
+			line = tmp;
+			i = -1;
+		}
+	}
+}
+
 /*
 ** Function ft_process_line() receives the line written on the terminal and
 ** take care of the steps needed in order to execute all the commands.
@@ -88,7 +154,7 @@ int		ft_double_semicolon_check(t_minishell *s)
 ** tokens. Then get variable expansion done through the function
 ** check_env_var(). The next step it would be get all the paths where the
 ** commands should be searched for. And finally, try to execute the command.
-** To get closed, function frees the variables that should be freed.
+** At the end, function frees the variables that should be freed.
 */
 void	ft_process_line(t_minishell *s)
 {
@@ -96,6 +162,7 @@ void	ft_process_line(t_minishell *s)
 
 	if (ft_double_semicolon_check(s))
 		return ;
+	get_redirection_marks_apart();
 	s->commands = special_split(line, ';');
 	i = -1;
 	while (s->commands[++i])
@@ -107,11 +174,15 @@ void	ft_process_line(t_minishell *s)
 			s->pipe_commands = ft_free_matrix(s->pipe_commands);
 		}
 		else
-			ft_no_pipes(s, i);
-	}
-	if (s->fd != 1)
+		{
+			if (ft_no_pipes(s, i))
+				return ;
+		}
+		if (s->fd != 1)
 		close(s->fd);
-	s->fd = 1;
+		s->fd = 1;
+	}
+
 	s->commands = ft_free_matrix(s->commands);
 	s->command_path = ft_free_ptr(s->command_path);
 }

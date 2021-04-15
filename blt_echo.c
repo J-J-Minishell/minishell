@@ -13,7 +13,7 @@ int		quotes(t_minishell *s, int i, int j)
 	{
 		j++;
 		double_q = s->tokens[i][j] == '"' ? 0 : double_q;
-		single_q = s->tokens[i][j] == '\'' ? 0 : single_q;
+		single_q = s->tokens[i][j] == '\'' ? 0 : single_q; // single_q *= (s->tokens[i][j] != '\'')
 
 		if (double_q || single_q)
 		{

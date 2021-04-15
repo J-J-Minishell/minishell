@@ -42,6 +42,12 @@ void	delete_in_redirections(t_minishell *s, int redirections, int i)
 	{
 		if (!ft_strncmp(s->tokens[i], "<", 2))
 			i += 2;
+		else if (!ft_strncmp(s->tokens[i], "<>", 3))
+		{
+			i += 2;
+			close(s->fd);
+			s->fd = 1;
+		}
 		else
 		{
 			tokens[j] = ft_strdup(s->tokens[i]);
@@ -68,6 +74,11 @@ void	check_in_redirections(t_minishell *s)
 			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
 			redirections++;
 		}
+		else if (ft_strncmp(s->tokens[i], "<>", 3) == 0)
+		{
+			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
+			redirections++;
+		}
 		i++;
 	}
 	if (redirections)
@@ -84,6 +95,11 @@ void	check_redirections(t_minishell *s)
 	while (s->tokens[i])
 	{
 		if (ft_strncmp(s->tokens[i], ">", 2) == 0)
+		{
+			s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_TRUNC, 0666);
+			redirections++;
+		}
+		else if (ft_strncmp(s->tokens[i], "<>", 3) == 0)
 		{
 			s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_TRUNC, 0666);
 			redirections++;
