@@ -1,5 +1,27 @@
 #include "minishell.h"
 
+int		skip_quotes(char *s)
+{
+	int		i;
+	int		d_quotes;
+	int		s_quotes;
+
+	i = 0;
+	d_quotes = (s[i] == '"');
+	s_quotes = (s[i] == '\'');
+	while ((d_quotes || s_quotes) && s[++i])
+	{
+		if (d_quotes)
+			d_quotes *= (s[i] != '"');
+		else
+			d_quotes = (s[i] == '"');
+		if (s_quotes)
+			s_quotes *= (s[i] != '\'');
+		else
+			s_quotes = (s[i] == '\'');
+	}
+	return (i);
+}
 
 char	**add_new_pos_matrix(char **matrix, char *new)
 {

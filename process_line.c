@@ -1,84 +1,41 @@
 #include "minishell.h"
 
-void	ft_process_tokken(t_minishell *s)
+int		double_redirection_error(t_minishell *s, int i)
 {
-	int 	i;
-
-	i = 0;
-	while (i < 7 && ft_strncmp(s->tokens[0], s->blt_cmds[i], ft_strlen(s->blt_cmds[i])) != 0)
-		i++;
-	if (i == 0)
-		cmd_echo(s);
-	else if (i == 1)
-		blt_cd(s);
-	else if (i == 2)
-		blt_pwd(s);
-	else if (i == 3)
-		blt_export(s);
-	else if (i == 4)
-		blt_unset(s);
-	else if (i == 5)
-		blt_env(s);
-	else if (i == 6)
-	{
-		ft_clean_up(s);
-		exit(0);
-	}
-	else
-		ft_execute_command(s);
-}
-
-int		ft_check_for_pipes(t_minishell *s, int i)
-{
-	int		j;
-
-	j = -1;
-	while (s->commands[i][++j] != '\0')
-	{
-		if (s->commands[i][j] == '|')
-			return (TRUE);
-	}
-	return (FALSE);
+	if (i == -1)
+		ft_putstr_fd("bash: syntax error near unexpected token `newline'\n", 2);
+	else if (line[i] == '<')
+		ft_putstr_fd("-bash: syntax error near unexpected token `<'\n", 2);
+	else if (line[i] == '>')
+		ft_putstr_fd("-bash: syntax error near unexpected token `>'\n", 2);
+	s->exit_status = 258;
+	return (TRUE);
 }
 
 int		check_double_redirection_marks(t_minishell *s)
 {
 	int 	i;
+	int		flag;
 
 	i = -1;
-	while(s->tokens[++i])
+	flag = 0;
+	while(line[++i])
 	{
-		if (s->tokens[i][0] == '>' &&  s->tokens[i][1] == '<')
+		i += skip_quotes(&line[i]);
+		if (!flag && (line[i] == '>' || line[i] == '<'))
+			flag = 1;
+		else if (flag && line[i] != '>' && line[i] != '<' && line[i] != ' ')
+			flag = 0;
+		else if (flag && (line[i] == '>' || line[i] == '<'))
 		{
-			printf("-bash: syntax error near unexpected token `<'\n");
-			s->exit_status = 258;
-			return (TRUE);
-		}
-		else if ((s->tokens[i][0] == '>' || s->tokens[i][0] == '<') && (s->tokens[i + 1][0] == '>' || s->tokens[i + 1][0] == '<'))
-		{
-			if (s->tokens[i + 1][0] == '>')
-				printf("-bash: syntax error near unexpected token `>'\n");
+			if (line[i] == '>' && (line[i - 1] == '>' || line[i - 1] == '<'))
+				flag = 0;
 			else
-				printf("-bash: syntax error near unexpected token `<'\n");
-			s->exit_status = 258;
-			return (TRUE);
+				return (double_redirection_error(s, i));
 		}
 	}
-}
-
-int		ft_no_pipes(t_minishell *s, int i)
-{
-	s->tokens = special_split(s->commands[i], ' ');
-	if (check_double_redirection_marks(s))
-		return (TRUE);
-	check_env_var(s);
-	check_redirections(s);
-	if (s->tokens[0])
-	{
-		ft_get_path(s);
-		ft_process_tokken(s);
-		s->tokens = ft_free_matrix(s->tokens);
-	}
+	if (flag)
+		return (double_redirection_error(s, -1));
 	return (FALSE);
 }
 
@@ -91,6 +48,7 @@ int		ft_double_semicolon_check(t_minishell *s)
 	i = -1;
 	while (line[++i])
 	{
+		i += skip_quotes(&line[i]);
 		if (line[i] == ';' && flag == TRUE)
 		{
 			printf("-bash: syntax error near unexpected token `;'\n");
@@ -107,41 +65,31 @@ int		ft_double_semicolon_check(t_minishell *s)
 	return (FALSE);
 }
 
-void	get_redirection_marks_apart()
+void	get_redirection_marks_apart(int i, char *tmp)
 {
-	int		i;
-	char	*tmp;
-	int		len;
+	char	*tmp2;
 
-	i = -1;
+	tmp2 = NULL;
 	while (line[++i])
 	{
-		if ((line[i] == '<' || line[i] == '>') && i > 0 && (line[i - 1] != '<' && line[i - 1] != '>' && line[i - 1] != ' '))
+		i += skip_quotes(&line[i]);
+		if ((line[i] == '<' || line[i] == '>') && i > 0 &&
+			(line[i - 1] != '<' && line[i - 1] != '>' && line[i - 1] != ' '))
 		{
-			len = ft_strlen(line);
-			tmp = malloc(len + 2);
-			ft_memmove(tmp, line, i);
-			tmp[i] = ' ';
-			ft_memmove(tmp + i + 1, &line[i], len - i);
-			tmp[len + 2] = '\0';
-			printf("%s\n", tmp);
+			tmp = ft_substr(line, 0, i);
+			tmp2 = ft_strjoin(" ", &line[i]);
 			free(line);
-			line = tmp;
-			i = -1;
+			line = ft_strjoin(tmp, tmp2);
 		}
-		else if ((line[i] == '<' || line[i] == '>') && (line[i + 1] != '<' && line[i + 1] != '>' && line[i + 1] != ' '))
+		if ((line[i] == '<' || line[i] == '>') && (line[i + 1] != '<' &&
+			line[i + 1] != '>' && line[i + 1] != ' '))
 		{
-			len = ft_strlen(line);
-			tmp = malloc(len + 2);
-			ft_memmove(tmp, line, i + 1);
-			tmp[i + 1] = ' ';
-			ft_memmove(tmp + i + 2, &line[i + 1], len - (i + 1));
-			tmp[len + 2] = '\0';
-			printf("%s\n", tmp);
+			tmp = ft_substr(line, 0, i + 1);
+			tmp2 = ft_strjoin(" ", &line[i + 1]);
 			free(line);
-			line = tmp;
-			i = -1;
+			line = ft_strjoin(tmp, tmp2);
 		}
+		if (tmp && !ft_free_ptr(tmp) && tmp2 && !ft_free_ptr(tmp2));
 	}
 }
 
@@ -160,29 +108,19 @@ void	ft_process_line(t_minishell *s)
 {
 	int		i;
 
-	if (ft_double_semicolon_check(s))
+	if (ft_double_semicolon_check(s) ||
+		check_double_redirection_marks(s))
 		return ;
-	get_redirection_marks_apart();
+	get_redirection_marks_apart(-1, NULL);
 	s->commands = special_split(line, ';');
 	i = -1;
 	while (s->commands[++i])
 	{
-		if (ft_check_for_pipes(s, i))
-		{
-			s->pipe_commands = special_split(s->commands[i], '|');
-			ft_pipes(s);
-			s->pipe_commands = ft_free_matrix(s->pipe_commands);
-		}
-		else
-		{
-			if (ft_no_pipes(s, i))
-				return ;
-		}
+		ft_process_command(s, i);
 		if (s->fd != 1)
-		close(s->fd);
+			close(s->fd);
 		s->fd = 1;
 	}
-
 	s->commands = ft_free_matrix(s->commands);
 	s->command_path = ft_free_ptr(s->command_path);
 }

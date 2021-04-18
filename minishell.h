@@ -39,6 +39,8 @@ typedef struct	s_minishell
 
 }				t_minishell;
 
+int		skip_quotes(char *s);
+void	ft_process_command(t_minishell *s, int i);
 void	check_redirections(t_minishell *s);
 void	ft_pipes(t_minishell *s);
 void	ft_process_tokken(t_minishell *s);
