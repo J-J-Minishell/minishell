@@ -117,6 +117,8 @@ void	ft_clean_up(t_minishell *s)
 		s->home = ft_free_ptr(s->home);
 	if (s->commands != NULL)
 		s->commands = ft_free_matrix(s->commands);
+	if (s->command_path != NULL)
+		s->command_path = ft_free_ptr(s->command_path);
 	if (s->tokens != NULL)
 		s->tokens = ft_free_matrix(s->tokens);
 	if (s->history_cmds != NULL)

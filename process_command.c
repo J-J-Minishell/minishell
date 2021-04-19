@@ -58,7 +58,7 @@ void	ft_process_command(t_minishell *s, int i)
 		{
 			ft_get_path(s);
 			ft_process_tokken(s);
-			s->tokens = ft_free_matrix(s->tokens);
 		}
+		s->tokens = ft_free_matrix(s->tokens);
 	}
 }

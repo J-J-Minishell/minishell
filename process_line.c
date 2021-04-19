@@ -29,7 +29,7 @@ int		check_double_redirection_marks(t_minishell *s)
 		else if (flag && (line[i] == '>' || line[i] == '<'))
 		{
 			if (line[i] == '>' && (line[i - 1] == '>' || line[i - 1] == '<'))
-				flag = 0;
+				flag = 1;
 			else
 				return (double_redirection_error(s, i));
 		}
@@ -65,11 +65,8 @@ int		ft_double_semicolon_check(t_minishell *s)
 	return (FALSE);
 }
 
-void	get_redirection_marks_apart(int i, char *tmp)
+void	get_redirection_marks_apart(int i, char *tmp, char *tmp2)
 {
-	char	*tmp2;
-
-	tmp2 = NULL;
 	while (line[++i])
 	{
 		i += skip_quotes(&line[i]);
@@ -89,7 +86,10 @@ void	get_redirection_marks_apart(int i, char *tmp)
 			free(line);
 			line = ft_strjoin(tmp, tmp2);
 		}
-		if (tmp && !ft_free_ptr(tmp) && tmp2 && !ft_free_ptr(tmp2));
+		if (tmp)
+			tmp = ft_free_ptr(tmp);
+		if (tmp2)
+			tmp2 = ft_free_ptr(tmp2);
 	}
 }
 
@@ -111,7 +111,7 @@ void	ft_process_line(t_minishell *s)
 	if (ft_double_semicolon_check(s) ||
 		check_double_redirection_marks(s))
 		return ;
-	get_redirection_marks_apart(-1, NULL);
+	get_redirection_marks_apart(-1, NULL, NULL);
 	s->commands = special_split(line, ';');
 	i = -1;
 	while (s->commands[++i])
@@ -120,7 +120,7 @@ void	ft_process_line(t_minishell *s)
 		if (s->fd != 1)
 			close(s->fd);
 		s->fd = 1;
+		s->command_path = ft_free_ptr(s->command_path);
 	}
 	s->commands = ft_free_matrix(s->commands);
-	s->command_path = ft_free_ptr(s->command_path);
 }

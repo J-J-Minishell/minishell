@@ -12,16 +12,23 @@ void	signal_out(t_minishell *s, char **tmp)
 
 /*
 ** si existe line y no es una cadena vacia("") tiene que borrar un carácter y los dos carácteres de delete "^?",
-** si no, borra sólo los dos del delete.
+** si no, borra sólo los dos del delete, excepto si es "¡" o "º" que se guardan como si fuesen
+** dos caracteres (-62 y -95 para "¡" y -70 para "º").
 ** dentro del if guarda en tmp = line menos un caracter y llama a add_history_cmd() 
 */
 void	delete_char(t_minishell *s, int index)
 {
 	char	*tmp;
+	int		len;
 
-	if (line && ft_strlen(line))
+	len = ft_strlen(line);
+	if (line && len)
 	{
-		tmp = ft_substr(line, 0, ft_strlen(line) - 1);
+		if (len > 1 && line[len - 2] == -62 && (line[len - 1] == -95 ||
+			line[len - 1] == -70))
+			tmp = ft_substr(line, 0, len - 2);
+		else
+			tmp = ft_substr(line, 0, len - 1);
 		free(line);
 		line = tmp;
 		ft_putstr_fd("\033[3D\033[0K", 2);
