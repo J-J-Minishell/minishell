@@ -15,7 +15,7 @@
 
 #include <termios.h>    //termios, TCSANOW, ECHO, ICANON
 
-# include "libft/libft.h"
+# include "../srcs/libft/libft.h"
 
 char	*line;
 
