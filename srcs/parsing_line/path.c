@@ -21,14 +21,18 @@ void	ft_get_path(t_minishell *s)
 	else
 	{
 		path = ft_get_env_var_content(s, "PATH");
-		//ft_get_env_path(s);
-		paths = ft_split(path, ':');
-		temp = ft_check_dir(s, paths);
-		complete_path = ft_strjoin(temp, "/");
-		paths = ft_free_matrix(paths);
-		s->command_path = ft_strjoin(complete_path, s->tokens[0]);
-		complete_path = ft_free_ptr(complete_path);
-		path = ft_free_ptr(path);
+		if (path == NULL)
+			;
+		else
+		{
+			paths = ft_split(path, ':');
+			temp = ft_check_dir(s, paths);
+			complete_path = ft_strjoin(temp, "/");
+			paths = ft_free_matrix(paths);
+			s->command_path = ft_strjoin(complete_path, s->tokens[0]);
+			complete_path = ft_free_ptr(complete_path);
+			path = ft_free_ptr(path);
+		}
 	}
 }
 
@@ -100,7 +104,7 @@ void		ft_abs_or_rel_path(t_minishell *s)
 	if (s->tokens[0][0] == '/')
 		s->command_path = ft_strdup(s->tokens[0]);
 	else if (s->tokens[0][0] == '.' && s->tokens[0][1] == '/')
-		s->command_path = ft_strjoin(temp, s->tokens[0] + 2);
+		s->command_path = ft_strjoin(temp, s->tokens[0] + 1);
 	else if (s->tokens[0][0] == '.' && s->tokens[0][1] == '.'
 		&& s->tokens[0][2] == '/')
 		ft_rel_back_path(s);

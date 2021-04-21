@@ -69,11 +69,13 @@ char	**cpy_matrix(char **matrix, int size)
 int		ft_find_env_var(t_minishell *s, char *var)
 {
 	int	i;
+	int	len;
 
+	len = ft_strlen(var);
 	i = 0;
 	while (s->env[i])
 	{
-		if (!(ft_strncmp(var, s->env[i], ft_strlen(var))))
+		if (!(ft_strncmp(var, s->env[i], len)))
 			return (i);
 		i++;
 	}
@@ -87,6 +89,8 @@ char	*ft_get_env_var_content(t_minishell *s, char *var)
 	char	*ret;
 
 	i = ft_find_env_var(s, var);
+	if (i == -1)
+		return (NULL);
 	j = 0;
 	while (s->env[i][j] != '=')
 		j++;

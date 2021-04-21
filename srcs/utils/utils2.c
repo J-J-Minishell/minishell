@@ -63,7 +63,7 @@ void	ft_clean_up(t_minishell *s)
 
 void	ft_print_error(t_minishell *s)
 {
-	printf("Error: %s\n", strerror(errno));
+	printf("-bash: %s\n", strerror(errno));
 	ft_clean_up(s);
 	exit(-1);
 }

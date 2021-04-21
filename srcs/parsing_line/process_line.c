@@ -94,6 +94,35 @@ void	get_redirection_marks_apart(int i, char *tmp, char *tmp2)
 	}
 }
 
+int		check_incomplete_pipes(t_minishell *s)
+{
+	int		i;
+
+	i = -1;
+	while (line[++i])
+	{
+		i += skip_quotes(&line[i]);
+		if (line[i] == '|')
+		{
+			while (line[i + 1] == ' ')
+				i++;
+			if (line[i + 1] == '\0' || line[i + 1] == '|')
+			{
+				printf("-bash: syntax error near unexpected token `|'\n");
+				s->exit_status = 258;
+				return (1);
+			}
+			else if (line[i + 1] == ';')
+			{
+				printf("-bash: syntax error near unexpected token `;'\n");
+				s->exit_status = 258;
+				return (1);
+			}
+		}
+	}
+	return (0);
+}
+
 /*
 ** Function ft_process_line() receives the line written on the terminal and
 ** take care of the steps needed in order to execute all the commands.
@@ -110,7 +139,7 @@ void	ft_process_line(t_minishell *s)
 	int		i;
 
 	if (ft_double_semicolon_check(s) ||
-		check_double_redirection_marks(s))
+		check_double_redirection_marks(s) || check_incomplete_pipes(s))
 		return ;
 	get_redirection_marks_apart(-1, NULL, NULL);
 	s->commands = special_split(line, ';');

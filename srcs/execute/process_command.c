@@ -3,6 +3,7 @@
 void	ft_process_tokken(t_minishell *s)
 {
 	int 	i;
+	struct stat buffer;
 
 	i = 0;
 	while (i < 7 && ft_strncmp(s->tokens[0], s->blt_cmds[i], ft_strlen(s->blt_cmds[i]) + 1) != 0)
@@ -25,7 +26,28 @@ void	ft_process_tokken(t_minishell *s)
 		exit(0);
 	}
 	else
-		ft_execute_command(s);
+	{
+		if (stat(s->command_path, &buffer))					 // si no existe el comando
+		{
+			ft_putstr_fd("-bash: ", 0);
+			ft_putstr_fd(s->tokens[0], 0);
+			ft_putstr_fd(": No such file or directory\n", 0);
+			s->exit_status = 127;
+			return ;
+		}
+		else
+		{
+			if (buffer.st_mode & !S_IRWXU)					// mira en la estructura que se ha guardado en buffer si hay permiso de ejecucion para el usuario
+			{
+				ft_putstr_fd("-bash: ", 0);
+				ft_putstr_fd(s->tokens[0], 0);
+				ft_putstr_fd(": Permission denied\n", 0);
+				s->exit_status = 126;
+				return ;
+			}
+			ft_execute_command(s);
+		}
+	}
 }
 
 int		ft_check_for_pipes(t_minishell *s, int i)
