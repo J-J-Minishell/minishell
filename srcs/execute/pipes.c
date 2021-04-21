@@ -17,7 +17,7 @@ void	switch_pipes(int *fds)
 /*
 ** solo entra en el if el hijo del fork.
 ** PRIMERA VEZ:
-** la primera vez que entra en esta funcion flag[0] = 1 porque es el primer comando 
+** la primera vez que entra en esta funcion flag[0] = 1 porque es el primer comando
 ** y flag[1] = 0 porque no es el ultimo comando. Entonces solo entra en el segundo if
 ** cambiando el STDOUT_FILENO por el del segundo pipe.
 ** ENTRE MEDIAS:
@@ -49,6 +49,7 @@ void	process_son(t_minishell *s, int *fds, int *flag)
 		exit(s->exit_status);
 	}
 }
+
 void	close_fds(int *fds)
 {
 	int	i;
@@ -62,7 +63,7 @@ void	close_fds(int *fds)
 }
 
 /*
-** al principìo crea dos pipes, fds[0] fds[1] y fds[2] fds[3] 
+** al principìo crea dos pipes, fds[0] fds[1] y fds[2] fds[3]
 ** flag[0] vale 1 si es el primer comando del primer pipe, si no, vale 0 (linea 91).
 ** flag[1] vale 0 salvo si es el ultimo comando del ultimo pipe, que entonces vale 1 (linea 87, 88).
 ** sons incrementa en uno cada vez que se hace un fork y luego al final por cada fork que se haya hecho

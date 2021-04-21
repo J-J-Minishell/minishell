@@ -9,6 +9,7 @@
 # include <sys/wait.h>
 # include <signal.h>
 # include <dirent.h>
+# include <sys/stat.h>
 
 # include <stdio.h>
 # include <time.h>

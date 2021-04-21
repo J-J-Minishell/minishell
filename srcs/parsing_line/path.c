@@ -104,7 +104,7 @@ void		ft_abs_or_rel_path(t_minishell *s)
 	if (s->tokens[0][0] == '/')
 		s->command_path = ft_strdup(s->tokens[0]);
 	else if (s->tokens[0][0] == '.' && s->tokens[0][1] == '/')
-		s->command_path = ft_strjoin(temp, s->tokens[0] + 2);
+		s->command_path = ft_strjoin(temp, s->tokens[0] + 1);
 	else if (s->tokens[0][0] == '.' && s->tokens[0][1] == '.'
 		&& s->tokens[0][2] == '/')
 		ft_rel_back_path(s);
