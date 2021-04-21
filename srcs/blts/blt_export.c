@@ -14,14 +14,14 @@ void	export(t_minishell *s)
 	}
 }
 
-int		print_export_error(char *token)
+int		print_export_error(t_minishell *s, char *token)
 {
 	char	*tmp;
 
-	tmp = ft_strdup(token);
+	tmp = error_backslash_var(s, token);
 	if (token[0] == '"')
 	{
-		ft_free_ptr(tmp);
+		free(tmp);
 		tmp = ft_strtrim(token, "\"");
 	}
 	ft_putstr_fd("-bash: export: `", 0);
@@ -49,12 +49,15 @@ void	export_env_var(t_minishell *s, char *export_var, int len_name)
 	s->env = add_new_pos_matrix(s->env, export_var);
 }
 
-void	set_exit_status(t_minishell *s, int exit)
+int		check_export_error(char *token, int j)
 {
-	if (exit)
-		s->exit_status = 1;
-	else
-		s->exit_status = 0;
+	if (j == 0 && !ft_isalpha(token[j]))
+		return (1);
+	else if (token[j] == '=' || token[j] == '\\')
+		return (0);
+	else if (!ft_isalnum(token[j]) && j > 0 && token[j - 1] != '\\')
+		return (1);
+	return (0);
 }
 
 void	blt_export(t_minishell *s)
@@ -70,16 +73,20 @@ void	blt_export(t_minishell *s)
 	while (s->tokens[i])
 	{
 		j = 0;
-		if (!ft_isalpha(s->tokens[i][j]) && s->tokens[i][j] != '_')
-			exit = print_export_error(s->tokens[i]);
-		else
+		while (s->tokens[i][j])
 		{
-			while(ft_isalnum(s->tokens[i][j]) || s->tokens[i][j] == '_')
-				j++;
-			if (s->tokens[i][j] == '=')
+			if (check_export_error(s->tokens[i], j))
+			{
+				s->exit_status = print_export_error(s, s->tokens[i]);
+				break;
+			}
+			else if (s->tokens[i][j] == '=')
+			{
 				export_env_var(s, s->tokens[i], j + 1);
+				break;
+			}
+			j++;
 		}
 		i++;
 	}
-	set_exit_status(s, exit);
 }

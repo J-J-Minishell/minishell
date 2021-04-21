@@ -1,5 +1,32 @@
 #include "../../includes/minishell.h"
 
+char	*error_backslash_var(t_minishell *s, char *token)
+{
+	int		i;
+	int		j;
+	char	*tmp;
+
+	i = -1;
+	j = 0;
+	while (token[++i])
+	{
+		if (token[i] != '\\')
+			j++;
+	}
+	tmp = malloc(sizeof(char) * ft_strlen(token) - j + 1);
+	if (!tmp)
+		ft_print_error(s);
+	i = -1;
+	j = 0;
+	while (token[++i])
+	{
+		if (token[i] != '\\')
+			tmp[j++] = token[i];
+	}
+	tmp[j] = '\0';
+	return (tmp);
+}
+
 void	*ft_free_matrix(char **matrix)
 {
 	int		i;

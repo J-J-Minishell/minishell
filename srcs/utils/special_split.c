@@ -22,16 +22,16 @@ static int	count_words(const char *s, char c)
 	single_q = 0;
 	while (s[i])
 	{
-		if (s[i] == '"')
-			double_q = double_q ? 0 : 1;
-		else if (s[i] == '\'')
-			single_q = single_q ? 0 : 1;
-		if (s[i] == c && !double_q && !single_q)
+		if (s[i] == '"' && s[i - 1] != '\\')
+			double_q = (double_q != 1);
+		else if (s[i] == '\'' && s[i - 1] != '\\')
+			single_q = (single_q != 1);
+		if (s[i] == c && !double_q && !single_q && s[i - 1] != '\\')
 		{
 			w++;
 			while (s[i] && s[i] == c)
 				i++;
-			w -= s[i] == '\0' ? 1 : 0;
+			w -= (s[i] == '\0');
 		}
 		else
 			i++;
@@ -50,11 +50,11 @@ static int	count_chars(const char *s, char c)
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] == '"')
-			double_q = double_q ? 0 : 1;
-		else if (s[i] == '\'')
-			single_q = single_q ? 0 : 1;
-		if (s[i] == c && !double_q && !single_q)
+		if (s[i] == '"' && s[i - 1] != '\\')
+			double_q = (double_q != 1);
+		else if (s[i] == '\'' && s[i - 1] != '\\')
+			single_q = (single_q != 1);
+		if (s[i] == c && !double_q && !single_q && s[i - 1] != '\\')
 			break;
 		i++;
 	}

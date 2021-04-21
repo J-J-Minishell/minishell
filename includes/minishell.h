@@ -39,6 +39,7 @@ typedef struct	s_minishell
 
 }				t_minishell;
 
+char	*error_backslash_var(t_minishell *s, char *token);
 int		skip_quotes(char *s);
 void	ft_process_command(t_minishell *s, int i);
 void	check_redirections(t_minishell *s);

@@ -22,7 +22,8 @@ int		check_double_redirection_marks(t_minishell *s)
 	while(line[++i])
 	{
 		i += skip_quotes(&line[i]);
-		if (!flag && (line[i] == '>' || line[i] == '<'))
+		if (!flag && (line[i] == '>' || line[i] == '<') && i > 0
+			&& line[i - 1] != '\\')
 			flag = 1;
 		else if (flag && line[i] != '>' && line[i] != '<' && line[i] != ' ')
 			flag = 0;
@@ -70,8 +71,8 @@ void	get_redirection_marks_apart(int i, char *tmp, char *tmp2)
 	while (line[++i])
 	{
 		i += skip_quotes(&line[i]);
-		if ((line[i] == '<' || line[i] == '>') && i > 0 &&
-			(line[i - 1] != '<' && line[i - 1] != '>' && line[i - 1] != ' '))
+		if ((line[i] == '<' || line[i] == '>') && i > 0 && line[i - 1] != '\\'
+			&& line[i - 1] != '<' && line[i - 1] != '>' && line[i - 1] != ' ')
 		{
 			tmp = ft_substr(line, 0, i);
 			tmp2 = ft_strjoin(" ", &line[i]);

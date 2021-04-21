@@ -44,7 +44,7 @@ void	wrong_env_var(t_minishell *s, int i, int j)
 
 	tmp = ft_substr(s->tokens[i], 0, j);
 	j++;
-	while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && s->tokens[i][j] != ' ' && s->tokens[i][j] != '$')
+	while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && s->tokens[i][j] != ' ' && s->tokens[i][j] != '$' && s->tokens[i][j] != '=')
 		j++;
 	token = ft_strjoin(tmp, tmp2 = ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i]) - j));
 	tmp = ft_free_ptr(tmp);

@@ -5,7 +5,7 @@ void	ft_process_tokken(t_minishell *s)
 	int 	i;
 
 	i = 0;
-	while (i < 7 && ft_strncmp(s->tokens[0], s->blt_cmds[i], ft_strlen(s->blt_cmds[i])) != 0)
+	while (i < 7 && ft_strncmp(s->tokens[0], s->blt_cmds[i], ft_strlen(s->blt_cmds[i]) + 1) != 0)
 		i++;
 	if (i == 0)
 		cmd_echo(s);
