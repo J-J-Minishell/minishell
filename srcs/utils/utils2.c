@@ -68,7 +68,7 @@ void	ft_print_error(t_minishell *s)
 	exit(-1);
 }
 
-int		ft_str_is_printable_ascii(char *s)
+int	ft_str_is_printable_ascii(char *s)
 {
 	int	i;
 
@@ -80,5 +80,4 @@ int		ft_str_is_printable_ascii(char *s)
 	if (s[i] == '\0')
 		return (1);
 	return (0);
-
 }

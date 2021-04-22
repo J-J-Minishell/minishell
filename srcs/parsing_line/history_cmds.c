@@ -66,23 +66,23 @@ void	write_history_cmd(t_minishell *s, int index)
 ** FLECHA IZQ O DER: entra en la función left_right_arrows.
 ** return index para devolver el índice por si se ha modificado. 
 */
-int		choose_history_cmd(t_minishell *s, int len, int index)
+int	choose_history_cmd(t_minishell *s, int len, int index)
 {
-	if (len >= 3 &&
+	if (len >= 3 && \
 		line[len - 3] == 27 && line[len - 2] == 91 && line[len - 1] == 65)
 	{
 		if (index > 0)
 			index--;
 		write_history_cmd(s, index);
 	}
-	else if (len >= 3 &&
+	else if (len >= 3 && \
 		line[len - 3] == 27 && line[len - 2] == 91 && line[len - 1] == 66)
 	{
 		if (index < s->n_cmds)
 			index++;
 		write_history_cmd(s, index);
 	}
-	else if (len >= 3 && line[len - 3] == 27 && line[len - 2] == 91 &&
+	else if (len >= 3 && line[len - 3] == 27 && line[len - 2] == 91 && \
 		(line[len - 1] == 67 || line[len - 1] == 68))
 		left_right_arrow(s, len);
 	return (index);

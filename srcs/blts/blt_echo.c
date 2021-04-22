@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-int		quotes(t_minishell *s, int i, int j)
+int	quotes(t_minishell *s, int i, int j)
 {
 	int		single_q;
 	int		double_q;
@@ -22,12 +22,12 @@ int		quotes(t_minishell *s, int i, int j)
 	return (j);
 }
 
-int		flag_newline(t_minishell *s)
+int	flag_newline(t_minishell *s)
 {
-	int i;
+	int	i;
 
 	i = 1;
-	while (s->tokens[i] && s->tokens[i][0] != '\0' &&
+	while (s->tokens[i] && s->tokens[i][0] != '\0' && \
 		ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
 		i++;
 	return (i);
@@ -44,12 +44,12 @@ void	check_special_tokens(t_minishell *s)
 	{
 		if (s->tokens[i][0] == '~' && s->tokens[i][1] == '\0')
 		{
-			//j = ft_find_env_var(s, "HOME");
-			//printf("%i\n", j);
 			tmp = ft_get_env_var_content(s, "HOME");
-			//printf("hola");
-			ft_free_ptr(s->tokens[i]);
-			s->tokens[i] = ft_strdup(tmp);
+			if (tmp)
+			{
+				ft_free_ptr(s->tokens[i]);
+				s->tokens[i] = ft_strdup(tmp);
+			}
 		}
 		i++;
 	}
@@ -60,12 +60,10 @@ void	cmd_echo(t_minishell *s)
 	int		i;
 	int		j;
 	int		newline;
-	int		counterbar;
 
 	check_special_tokens(s);
-	counterbar = FALSE;
 	i = flag_newline(s);
-	newline = i > 1 ? 0 : 1;
+	newline = (i <= 1);
 	while (s->tokens[i])
 	{
 		j = 0;
@@ -73,17 +71,8 @@ void	cmd_echo(t_minishell *s)
 		{
 			if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
 				j = quotes(s, i, j);
-			else
-			{
-				if (s->tokens[i][j] == '\\')
-					counterbar = TRUE;
-				if (counterbar)
-				{
-					counterbar = FALSE;
-					j++;
-				}
+			else if (s->tokens[i][j] != '\\')
 				write(s->fd, s->tokens[i] + j, 1);
-			}
 			j++;
 		}
 		if (j && s->tokens[i + 1])

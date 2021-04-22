@@ -44,7 +44,7 @@ void	ft_get_path(t_minishell *s)
 ** Other than that, returns NULL pointer.
 */
 
-char    *ft_check_dir(t_minishell *s, char **paths)
+char	*ft_check_dir(t_minishell *s, char **paths)
 {
 	int				i;
 	DIR				*dir;
@@ -59,11 +59,11 @@ char    *ft_check_dir(t_minishell *s, char **paths)
 			sd = readdir(dir);
 			while (dir && sd)
 			{
-				if (!(ft_strncmp(sd->d_name, s->tokens[0],
+				if (!(ft_strncmp(sd->d_name, s->tokens[0], \
 					(strlen(s->tokens[0]) + 1))))
 				{
 					closedir(dir);
-					return(paths[i]);
+					return (paths[i]);
 				}
 				sd = readdir(dir);
 			}
@@ -73,7 +73,7 @@ char    *ft_check_dir(t_minishell *s, char **paths)
 	return (NULL);
 }
 
-void		ft_rel_back_path(t_minishell *s)
+void	ft_rel_back_path(t_minishell *s)
 {
 	int		len;
 	int		i;
@@ -102,7 +102,7 @@ void		ft_rel_back_path(t_minishell *s)
 	ft_free_ptr(pwd);
 }
 
-void		ft_abs_or_rel_path(t_minishell *s)
+void	ft_abs_or_rel_path(t_minishell *s)
 {
 	char	*temp;
 

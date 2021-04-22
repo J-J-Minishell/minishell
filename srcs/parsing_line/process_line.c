@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-int		double_redirection_error(t_minishell *s, int i)
+int	double_redirection_error(t_minishell *s, int i)
 {
 	if (i == -1)
 		ft_putstr_fd("bash: syntax error near unexpected token `newline'\n", 2);
@@ -12,14 +12,14 @@ int		double_redirection_error(t_minishell *s, int i)
 	return (TRUE);
 }
 
-int		check_double_redirection_marks(t_minishell *s)
+int	check_double_redirection_marks(t_minishell *s)
 {
-	int 	i;
+	int		i;
 	int		flag;
 
 	i = -1;
 	flag = 0;
-	while(line[++i])
+	while (line[++i])
 	{
 		i += skip_quotes(&line[i]);
 		if (!flag && (line[i] == '>' || line[i] == '<') && i > 0
@@ -40,7 +40,7 @@ int		check_double_redirection_marks(t_minishell *s)
 	return (FALSE);
 }
 
-int		ft_double_semicolon_check(t_minishell *s)
+int	ft_double_semicolon_check(t_minishell *s)
 {
 	int		i;
 	int		flag;
@@ -79,7 +79,7 @@ void	get_redirection_marks_apart(int i, char *tmp, char *tmp2)
 			free(line);
 			line = ft_strjoin(tmp, tmp2);
 		}
-		if ((line[i] == '<' || line[i] == '>') && (line[i + 1] != '<' &&
+		if ((line[i] == '<' || line[i] == '>') && (line[i + 1] != '<' && \
 			line[i + 1] != '>' && line[i + 1] != ' '))
 		{
 			tmp = ft_substr(line, 0, i + 1);
@@ -94,7 +94,7 @@ void	get_redirection_marks_apart(int i, char *tmp, char *tmp2)
 	}
 }
 
-int		check_incomplete_pipes(t_minishell *s)
+int	check_incomplete_pipes(t_minishell *s)
 {
 	int		i;
 
@@ -138,7 +138,7 @@ void	ft_process_line(t_minishell *s)
 {
 	int		i;
 
-	if (ft_double_semicolon_check(s) ||
+	if (ft_double_semicolon_check(s) || \
 		check_double_redirection_marks(s) || check_incomplete_pipes(s))
 		return ;
 	get_redirection_marks_apart(-1, NULL, NULL);

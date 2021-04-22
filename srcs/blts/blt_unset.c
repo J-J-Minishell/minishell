@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-int		print_unset_error(char *token)
+int	print_unset_error(char *token)
 {
 	char	*tmp;
 
@@ -26,7 +26,8 @@ void	unset_env_var(t_minishell *s, char *unset_var, int delete)
 	i = 0;
 	while (s->env[i])
 		i++;
-	if (!(tmp = (char **)malloc(sizeof(char *) * i)))
+	tmp = (char **)malloc(sizeof(char *) * i);
+	if (!tmp)
 		ft_print_error(s);
 	i = 0;
 	j = 0;
@@ -60,7 +61,7 @@ void	blt_unset(t_minishell *s)
 		else if (j >= 0)
 		{
 			unset_env_var(s, s->tokens[i], j);
-			exit = exit == 1 ? 1 : 0;
+			exit = (exit == 1);
 		}
 		i++;
 	}

@@ -13,13 +13,18 @@
 ** through ft_substr() function wich use malloc().
 */
 
-int		len_env_var(t_minishell *s, char *str)
+int	len_env_var(t_minishell *s, char *str)
 {
 	int		i;
 	int		len;
 	char	*name;
 	char	*tmp;
 
+	if (str[0] == '?')
+	{
+		s->env_address = ft_itoa(s->exit_status);
+		return (2);
+	}
 	i = 0;
 	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
@@ -44,9 +49,11 @@ void	wrong_env_var(t_minishell *s, int i, int j)
 
 	tmp = ft_substr(s->tokens[i], 0, j);
 	j++;
-	while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && s->tokens[i][j] != ' ' && s->tokens[i][j] != '$' && s->tokens[i][j] != '=')
+	while (s->tokens[i][j] && s->tokens[i][j] != '"' && s->tokens[i][j] != '\'' && \
+	s->tokens[i][j] != ' ' && s->tokens[i][j] != '$' && s->tokens[i][j] != '=')
 		j++;
-	token = ft_strjoin(tmp, tmp2 = ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i]) - j));
+	tmp2 = ft_substr(s->tokens[i], j, ft_strlen(s->tokens[i]) - j);
+	token = ft_strjoin(tmp, tmp2);
 	tmp = ft_free_ptr(tmp);
 	tmp2 = ft_free_ptr(tmp2);
 	s->tokens[i] = ft_free_ptr(s->tokens[i]);
@@ -67,7 +74,7 @@ void	wrong_env_var(t_minishell *s, int i, int j)
 ** Inside the if,
 */
 
-int		replace_env_var(t_minishell *s, int i, int j)
+int	replace_env_var(t_minishell *s, int i, int j)
 {
 	char	*token;
 	char	*tmp;
@@ -75,16 +82,14 @@ int		replace_env_var(t_minishell *s, int i, int j)
 	char	*tmp2;
 
 	len = len_env_var(s, &s->tokens[i][j + 1]);
-	if (len == 0 && s->tokens[i][j + 1] == '?')
-	{
-		len = 2;
-		s->env_address = ft_itoa(s->exit_status);
-	}
 	if (len)
 	{
-		tmp = ft_strjoin((tmp2 = ft_substr(s->tokens[i], 0, j)), s->env_address);
+		tmp2 = ft_substr(s->tokens[i], 0, j);
+		tmp = ft_strjoin(tmp2, s->env_address);
 		tmp2 = ft_free_ptr(tmp2);
-		token = ft_strjoin(tmp, (tmp2 = ft_substr(s->tokens[i], j + len, ft_strlen(s->tokens[i] + j + len))));
+		tmp2 = ft_substr(s->tokens[i], j + len, \
+		ft_strlen(s->tokens[i] + j + len));
+		token = ft_strjoin(tmp, tmp2);
 		tmp2 = ft_free_ptr(tmp2);
 		tmp = ft_free_ptr(tmp);
 		s->tokens[i] = ft_free_ptr(s->tokens[i]);
@@ -110,6 +115,19 @@ int		replace_env_var(t_minishell *s, int i, int j)
 ** len_env_var function.
 */
 
+int	find_env_var(t_minishell *s, int single_q, int i, int j)
+{
+	if (s->tokens[i][j] == '$' && (ft_isalpha(s->tokens[i][j + 1]) || \
+		s->tokens[i][j + 1] == '_' || s->tokens[i][j + 1] == '?' || \
+		s->tokens[i][j + 1] == '"') && !single_q && \
+		check_backslash(s->tokens[i], j))
+	{
+		j += replace_env_var(s, i, j);
+		s->env_address = ft_free_ptr(s->env_address);
+	}
+	return (j);
+}
+
 void	check_env_var(t_minishell *s)
 {
 	int		i;
@@ -126,30 +144,13 @@ void	check_env_var(t_minishell *s)
 		while (s->tokens[i][j])
 		{
 			if (s->tokens[i][j] == '"')
-				double_q = !single_q && !double_q ? 1 : 0;
+				double_q = (!single_q && !double_q);
 			else if (s->tokens[i][j] == '\'')
-				single_q = !double_q && !single_q ? 1 : 0;
-			else if (s->tokens[i][j] == '$' && (ft_isalpha(s->tokens[i][j + 1]) ||  s->tokens[i][j + 1] == '_' || s->tokens[i][j + 1] == '?'
-				|| s->tokens[i][j + 1] == '"') && !single_q && !ft_counterbar_before_expansion(s, i, j))
-			{
-				j += replace_env_var(s, i, j);
-				s->env_address = ft_free_ptr(s->env_address);
-			}
+				single_q = (!double_q && !single_q);
+			j = find_env_var(s, single_q, i, j);
 			j++;
 		}
 		i++;
 	}
 	s->exit_status = 0;
-}
-
-int			ft_counterbar_before_expansion(t_minishell *s, int i, int j)
-{
-	int		counterbar;
-
-	counterbar = 0;
-	while (j > 0 && s->tokens[i][--j] == '\\')
-		counterbar++;
-	if (counterbar % 2)
-		return (TRUE);
-	return (FALSE);
 }

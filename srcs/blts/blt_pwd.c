@@ -2,7 +2,7 @@
 
 void	blt_pwd(t_minishell *s)
 {
-	int i;
+	int	i;
 
 	i = ft_find_env_var(s, "PWD=");
 	if (i >= 0)

@@ -7,14 +7,15 @@ void	delete_redirections(t_minishell *s, int redirections, int i)
 	int		j;
 
 	len = i - (redirections * 2);
-	if (!(tokens = (char **)malloc(sizeof(char *) * (len + 1))))
+	tokens = (char **)malloc(sizeof(char *) * (len + 1));
+	if (!tokens)
 		ft_print_error(s);
 	i = 0;
 	j = 0;
 	while (s->tokens[i])
 	{
-		if (!ft_strncmp(s->tokens[i], ">", 2) ||
-			!ft_strncmp(s->tokens[i], ">>", 3) || !ft_strncmp(s->tokens[i], "<>", 3))
+		if (!ft_strncmp(s->tokens[i], ">>", 3) || \
+		!ft_strncmp(s->tokens[i], ">", 2) || !ft_strncmp(s->tokens[i], "<>", 3))
 			i += 2;
 		else
 		{
@@ -35,7 +36,8 @@ void	delete_in_redirections(t_minishell *s, int redirections, int i)
 	int		j;
 
 	len = i - (redirections * 2);
-	if (!(tokens = (char **)malloc(sizeof(char *) * (len + 1))))
+	tokens = (char **)malloc(sizeof(char *) * (len + 1));
+	if (!tokens)
 		ft_print_error(s);
 	i = 0;
 	j = 0;
@@ -75,7 +77,7 @@ void	check_in_redirections(t_minishell *s)
 		delete_in_redirections(s, redirections, i);
 }
 
-int		output_redirections(t_minishell *s, int i, int redirections)
+int	output_redirections(t_minishell *s, int i, int redirections)
 {
 	if (!ft_strncmp(s->tokens[i], ">", 2))
 	{
@@ -114,7 +116,7 @@ void	check_redirections(t_minishell *s)
 	{
 		redirections = output_redirections(s, i, redirections);
 		i++;
-		if (s->fd != 1 && s->tokens[i] && (!ft_strncmp(s->tokens[i], ">", 2) ||
+		if (s->fd != 1 && s->tokens[i] && (!ft_strncmp(s->tokens[i], ">", 2) || \
 			!ft_strncmp(s->tokens[i], ">>", 3)))
 			close(s->fd);
 	}

@@ -1,6 +1,6 @@
 #include "../../includes/minishell.h"
 
-int		skip_quotes(char *s)
+int	skip_quotes(char *s)
 {
 	int		i;
 	int		d_quotes;
@@ -32,7 +32,8 @@ char	**add_new_pos_matrix(char **matrix, char *new)
 	while (matrix && matrix[i])
 		i++;
 	i++;
-	if (!(tmp = (char **)malloc(sizeof(char *) * (i + 1))))
+	tmp = (char **)malloc(sizeof(char *) * (i + 1));
+	if (!tmp)
 		return (NULL);
 	i = 0;
 	while (matrix && matrix[i])
@@ -54,7 +55,8 @@ char	**cpy_matrix(char **matrix, int size)
 
 	if (!matrix)
 		return (NULL);
-	if (!(tmp = (char **)malloc(sizeof(char *) * (size + 1))))
+	tmp = (char **)malloc(sizeof(char *) * (size + 1));
+	if (!tmp)
 		return (NULL);
 	i = 0;
 	while (matrix[i] && i < size)
@@ -66,7 +68,7 @@ char	**cpy_matrix(char **matrix, int size)
 	return (tmp);
 }
 
-int		ft_find_env_var(t_minishell *s, char *var)
+int	ft_find_env_var(t_minishell *s, char *var)
 {
 	int	i;
 	int	len;

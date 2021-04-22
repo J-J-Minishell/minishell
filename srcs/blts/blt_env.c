@@ -2,7 +2,7 @@
 
 void	blt_env(t_minishell *s)
 {
-	int 	i;
+	int	i;
 
 	i = 0;
 	while (s->env[i])

@@ -1,16 +1,3 @@
-// Isolate each command getting rid of useless characters (as initial o final spaces, duplicate spaces or ';' at the end).
-// Split commands into tokens
-// Make the environment variables expansion
-// No leaks or errors so far
-
-
-//////////////////////////////////////////////////////////
-//														//
-//   To do:   execute system commands with no pipes     //
-//														//
-//////////////////////////////////////////////////////////
-
-
 // valgrind --leak-check=full \
 // 			--show-leak-kinds=all \
 // 			--track-origins=yes \

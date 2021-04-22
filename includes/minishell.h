@@ -40,6 +40,7 @@ typedef struct	s_minishell
 
 }				t_minishell;
 
+int		check_backslash(char *str, int i);
 char	*error_backslash_var(t_minishell *s, char *token);
 int		skip_quotes(char *s);
 void	ft_process_command(t_minishell *s, int i);
@@ -56,7 +57,7 @@ int		ft_str_is_printable_ascii(char *s);
 void	export_env_var(t_minishell *s, char *export_var, int len_name);
 void	check_env_var(t_minishell *s);
 void	cmd_echo(t_minishell *s);
-char	**special_split(char const *s, char c);
+char	**special_split(char *s, char c);
 
 void	ft_get_env_variables(t_minishell *s, char **envp);
 void	ft_initialize_variables(t_minishell *s);
