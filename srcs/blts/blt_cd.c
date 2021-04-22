@@ -98,7 +98,14 @@ void	blt_cd(t_minishell *s)
 	{
 		i = ft_find_env_var(s, "HOME=");
 		if (i >= 0)
+		{
 			if (chdir(s->env[i] + 5) == 0)
 				change_pwd(s);
+		}
+		else
+		{
+			ft_putstr_fd("-bash: cd: HOME not set", 0);
+			s->exit_status = 1;
+		}
 	}
 }

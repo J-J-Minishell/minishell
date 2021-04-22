@@ -44,25 +44,31 @@ void	ft_get_path(t_minishell *s)
 ** Other than that, returns NULL pointer.
 */
 
-char	*ft_check_dir(t_minishell *s, char **paths)
+char    *ft_check_dir(t_minishell *s, char **paths)
 {
+	int				i;
 	DIR				*dir;
 	struct dirent	*sd;
 
-	while (*paths)
+	i = -1;
+	while (paths[++i])
 	{
-		dir = opendir(*paths);
-		while ((sd = readdir(dir)))
+		dir = opendir(paths[i]);
+		if (dir)
 		{
-			if (!(ft_strncmp(sd->d_name, s->tokens[0],
-				(strlen(s->tokens[0]) + 1))))
+			sd = readdir(dir);
+			while (dir && sd)
 			{
-				closedir(dir);
-				return(*paths);
+				if (!(ft_strncmp(sd->d_name, s->tokens[0],
+					(strlen(s->tokens[0]) + 1))))
+				{
+					closedir(dir);
+					return(paths[i]);
+				}
+				sd = readdir(dir);
 			}
+			closedir(dir);
 		}
-		closedir(dir);
-		*paths++;
 	}
 	return (NULL);
 }

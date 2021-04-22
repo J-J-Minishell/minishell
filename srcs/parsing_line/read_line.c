@@ -14,7 +14,7 @@ void	signal_out(t_minishell *s, char **tmp)
 ** si existe line y no es una cadena vacia("") tiene que borrar un carácter y los dos carácteres de delete "^?",
 ** si no, borra sólo los dos del delete, excepto si es "¡" o "º" que se guardan como si fuesen
 ** dos caracteres (-62 y -95 para "¡" y -70 para "º").
-** dentro del if guarda en tmp = line menos un caracter y llama a add_history_cmd() 
+** dentro del if guarda en tmp = line menos un caracter y llama a add_history_cmd()
 */
 void	delete_char(t_minishell *s, int index)
 {

@@ -26,6 +26,7 @@ void	switch_pipes(int *fds)
 ** ULTIMA:
 ** en la ultima solo cambia el STDIN_FILENO por la salida del anterior comando
 */
+
 void	process_son(t_minishell *s, int *fds, int *flag)
 {
 	int	j;
@@ -69,12 +70,13 @@ void	close_fds(int *fds)
 ** sons incrementa en uno cada vez que se hace un fork y luego al final por cada fork que se haya hecho
 ** hace un wait para esperar a que haya terminado el proceso.
 */
+
 void	ft_pipes(t_minishell *s)
 {
-	int i;
-	int fds[4];
-	int flag[2];
-	int sons;
+	int	i;
+	int	fds[4];
+	int	flag[2];
+	int	sons;
 
 	pipe(fds);
 	pipe(fds + 2);
