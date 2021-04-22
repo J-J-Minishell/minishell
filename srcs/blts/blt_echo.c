@@ -22,16 +22,67 @@ int	quotes(t_minishell *s, int i, int j)
 	return (j);
 }
 
-int	flag_newline(t_minishell *s)
+/*
+** This function
+*/
+
+int	flag_newline(t_minishell *s, char *token)
 {
 	int	i;
+	int	j;
+	int	newline;
 
-	i = 1;
-	while (s->tokens[i] && s->tokens[i][0] != '\0' && \
-		ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
-		i++;
-	return (i);
+	newline = FALSE;
+	i = 0;
+	if (token[i] == '-' && token[i + 1] == 'n')
+	{
+		newline = TRUE;
+		while (token[++i] != '\0')
+		{
+			if (token[i] != 'n')
+			{
+				newline = FALSE;
+				break ;
+			}
+		}
+		if (newline == TRUE)
+			return (newline);
+	}
+	return (newline);
+
+	// newline = FALSE;
+	// i = 0;
+	// while (s->tokens[++i])
+	// {
+	// 	j = 0;
+	// 	if (s->tokens[i][j] == '-' && s->tokens[i][j + 1] == 'n')
+	// 	{
+	// 		newline = TRUE;
+	// 		while (s->tokens[i][++j] != '\0')
+	// 		{
+	// 			if (s->tokens[i][j] != 'n')
+	// 			{
+	// 				newline = FALSE;
+	// 				break ;
+	// 			}
+	// 		}
+	// 		if (newline == TRUE)
+	// 			return (TRUE);
+	// 	}
+	//}
+
+	// i = 1;
+	// while (s->tokens[i] && s->tokens[i][0] != '\0' && \
+	// 	ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
+	// 	i++;
+	// return (i);
 }
+
+/*
+** This function search in each token passed to echo command if there is the
+** '~' character alone. If it is found the function get the character
+** replaced for the home path stored in the HOME variable.
+*/
 
 void	check_special_tokens(t_minishell *s)
 {
@@ -55,6 +106,12 @@ void	check_special_tokens(t_minishell *s)
 	}
 }
 
+/*
+** This function starts calling check_special_tokens() in order to look if one
+** of the tokens is '~'. In that case the token is replaced for HOME path.
+**
+*/
+
 void	cmd_echo(t_minishell *s)
 {
 	int		i;
@@ -62,18 +119,19 @@ void	cmd_echo(t_minishell *s)
 	int		newline;
 
 	check_special_tokens(s);
-	i = flag_newline(s);
-	newline = (i <= 1);
+	newline = TRUE;
+	i = 0;
+	while (flag_newline(s, s->tokens[++i]))
+		newline = FALSE;
 	while (s->tokens[i])
 	{
-		j = 0;
-		while (s->tokens[i][j])
+		j = -1;
+		while (s->tokens[i][++j])
 		{
 			if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
 				j = quotes(s, i, j);
 			else if (s->tokens[i][j] != '\\')
 				write(s->fd, s->tokens[i] + j, 1);
-			j++;
 		}
 		if (j && s->tokens[i + 1])
 			write(s->fd, " ", 1);

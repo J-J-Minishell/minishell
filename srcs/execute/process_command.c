@@ -1,10 +1,22 @@
 #include "../../includes/minishell.h"
 
+/*
+** This function is used when the command is not a builtin. It starts checking
+** if the command exists. It uses stat() function to do that. Using stat() the
+** info about the file it is saved on a struct that is used later to check the
+** execution permissions.
+** If the command doesn't exist error message is printed on stdout and exit
+** status is set properly. If the command exists but doesn't have execution
+** permission an error message is printed on stdout and exit status is set.
+** Finally, if the command exists and have execution permission the function
+** ft_execute_command() is called.
+*/
+
 void	no_blt(t_minishell *s)
 {
-	struct stat	buffer;
+	struct stat	st;
 
-	if (stat(s->command_path, &buffer))					 // si no existe el comando
+	if (stat(s->command_path, &st))
 	{
 		ft_putstr_fd("-bash: ", 0);
 		ft_putstr_fd(s->tokens[0], 0);
@@ -14,7 +26,7 @@ void	no_blt(t_minishell *s)
 	}
 	else
 	{
-		if (buffer.st_mode & !S_IRWXU)					// mira en la estructura que se ha guardado en buffer si hay permiso de ejecucion para el usuario
+		if (st.st_mode & !S_IRWXU)
 		{
 			ft_putstr_fd("-bash: ", 0);
 			ft_putstr_fd(s->tokens[0], 0);
@@ -25,6 +37,13 @@ void	no_blt(t_minishell *s)
 		ft_execute_command(s);
 	}
 }
+
+/*
+** This function compares the first token (the one that stores the command)
+** whit the array of strings containing the builtin commands. If it gets a
+** match, it calls the apropiate function. If there is no coincidence, it
+** calls no_blt() function, in order to execute a non builtin command.
+*/
 
 void	ft_process_tokken(t_minishell *s)
 {
@@ -55,6 +74,11 @@ void	ft_process_tokken(t_minishell *s)
 		no_blt(s);
 }
 
+/*
+** This function go through the string where the command is stored in order to
+** locate pipe marks '|'. It returns if a pipe was located or not.
+*/
+
 int	ft_check_for_pipes(t_minishell *s, int i)
 {
 	int	j;
@@ -67,6 +91,21 @@ int	ft_check_for_pipes(t_minishell *s, int i)
 	}
 	return (FALSE);
 }
+
+/*
+** This function first use ft_check_for_pipes() to know if there are pipes that
+** it should manage. If the answer is yes, split the command line using pipe
+** mark as separator and stores the result in a string array inside the main
+** struct. Then it calls the function in charge of manage pipes.
+** If there is no pipes, first split the command into tokens using blank space
+** as separator. Then calls check_env_var() to make the proper variable
+** expansion if it is needed. Next it calls check_redirections() to take care
+** of the in and out redirections. After finish all that calls ft_get_path() to
+** get the complete path to the command. And finally calls the function
+** ft_process_token() where the command will be executed.
+** After the command has been executed the function free the string array of
+** tokens.
+*/
 
 void	ft_process_command(t_minishell *s, int i)
 {
