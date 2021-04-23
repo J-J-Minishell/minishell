@@ -1,18 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** This function receives the memory address where the environment variable
-** starts (just after the '$' character) and obtains the lenght of the
-** variable's content.
-** It starts checking if the first position is the '=' character and set a flag
-** to define where to start.
-** Then, starts checking each character until something different fron '_'
-** or alfanumeric character is founded. The counter is increased with each
-** character checked. And add 1 more at the end.
-** Just after that, the function copies variable's name to a temporal string
-** through ft_substr() function wich use malloc().
-*/
-
 int	len_env_var(t_minishell *s, char *str)
 {
 	int		i;
@@ -60,20 +47,6 @@ void	wrong_env_var(t_minishell *s, int i, int j)
 	s->tokens[i] = token;
 }
 
-/*
-** This function receives (in addition to the struct) the token number, and the
-** number that corresponds to the '$' char position inside the token. And after
-** get the substitution done, it returns a number that stands for the position
-** where the caller function (check_env_var()) should continue searching for
-** more variables to expand.
-** First the function calls to len_env_var() that returns the name of the
-** variable to be expanded plus one. And also set a varible accesible through
-** the struct, with a pointer to the variable content.
-** Then, there is an if (for regular variables, those made of alfanumeric
-** characters or '_'), and and else (for the rest).
-** Inside the if,
-*/
-
 int	replace_env_var(t_minishell *s, int i, int j)
 {
 	char	*token;
@@ -100,20 +73,6 @@ int	replace_env_var(t_minishell *s, int i, int j)
 		wrong_env_var(s, i, j);
 	return (-1);
 }
-
-/*
-** This function checks every token serching for environment variables to be
-** replaced whit their value. If environment variable is between single quotes
-** it is not replaced.
-** It works checking each character in the token. If a quote is located a flag
-** is set to show if they are opened or closed. Also check for '$' char. If one
-** is located beeing followed by alfanumeric characters, function calls
-** replace_env_var() function to get the replacement done (except if the
-** '$' character was inside a single quote space or the '$' character is not
-** preceded by '\' character that would remove the '$' special meaning).
-** Finally, function should freed s->env_address variable allocated inside of
-** len_env_var function.
-*/
 
 int	find_env_var(t_minishell *s, int single_q, int i, int j)
 {

@@ -13,14 +13,13 @@
 
 # include <stdio.h>
 # include <time.h>
-
-#include <termios.h>    //termios, TCSANOW, ECHO, ICANON
+# include <termios.h>
 
 # include "../srcs/libft/libft.h"
 
-char	*line;
+char	*g_ln;
 
-typedef struct	s_minishell
+typedef struct s_minishell
 {
 	char	*env_address;
 	char	**env;
@@ -40,6 +39,7 @@ typedef struct	s_minishell
 
 }				t_minishell;
 
+int		double_redirection_error(t_minishell *s, int i);
 int		check_backslash(char *str, int i);
 char	*error_backslash_var(t_minishell *s, char *token);
 int		skip_quotes(char *s);
@@ -68,7 +68,7 @@ void	*ft_free_matrix(char **matrix);
 char	*ft_get_env_var_content(t_minishell *s, char *var);
 int		ft_find_env_var(t_minishell *s, char *var);
 
-void	ft_read_line(t_minishell *s);
+void	ft_read_line(t_minishell *s, int index, char c);
 
 void	ft_process_line(t_minishell *s);
 

@@ -1,14 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Function ft_get_path() first saves in a variable the content of the
-** environment $PATH. Then split all the paths contained in that
-** variable and check every one of them searching for the command that
-** needs to be executed. If the command is founded on one of those paths
-** the complete path of the command is saved in s->command_path variable.
-** Other than that, s->command_path remains pointing to NULL.
-*/
-
 void	ft_get_path(t_minishell *s)
 {
 	char	**paths;
@@ -35,14 +26,6 @@ void	ft_get_path(t_minishell *s)
 		}
 	}
 }
-
-/*
-** Function ft_check_dir() opens, one by one, the directories where the
-** executable commands could be founded (those included on $PATH evironment
-** variable), and search there for the actual command thar should be executed.
-** When the comand is founded, this function returns the appropiate path.
-** Other than that, returns NULL pointer.
-*/
 
 char	*ft_check_dir(t_minishell *s, char **paths)
 {

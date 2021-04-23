@@ -1,10 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** This simple function print the actual work directory. In order to do that
-** it checks the environment variable PWD.
-*/
-
 void	blt_pwd(t_minishell *s)
 {
 	int	i;

@@ -1,17 +1,5 @@
 #include "../../includes/minishell.h"
 
-int	double_redirection_error(t_minishell *s, int i)
-{
-	if (i == -1)
-		ft_putstr_fd("bash: syntax error near unexpected token `newline'\n", 2);
-	else if (line[i] == '<')
-		ft_putstr_fd("-bash: syntax error near unexpected token `<'\n", 2);
-	else if (line[i] == '>')
-		ft_putstr_fd("-bash: syntax error near unexpected token `>'\n", 2);
-	s->exit_status = 258;
-	return (TRUE);
-}
-
 int	check_double_redirection_marks(t_minishell *s)
 {
 	int		i;
@@ -19,17 +7,17 @@ int	check_double_redirection_marks(t_minishell *s)
 
 	i = -1;
 	flag = 0;
-	while (line[++i])
+	while (g_ln[++i])
 	{
-		i += skip_quotes(&line[i]);
-		if (!flag && (line[i] == '>' || line[i] == '<') && i > 0
-			&& line[i - 1] != '\\')
+		i += skip_quotes(&g_ln[i]);
+		if (!flag && (g_ln[i] == '>' || g_ln[i] == '<') && i > 0
+			&& g_ln[i - 1] != '\\')
 			flag = 1;
-		else if (flag && line[i] != '>' && line[i] != '<' && line[i] != ' ')
+		else if (flag && g_ln[i] != '>' && g_ln[i] != '<' && g_ln[i] != ' ')
 			flag = 0;
-		else if (flag && (line[i] == '>' || line[i] == '<'))
+		else if (flag && (g_ln[i] == '>' || g_ln[i] == '<'))
 		{
-			if (line[i] == '>' && (line[i - 1] == '>' || line[i - 1] == '<'))
+			if (g_ln[i] == '>' && (g_ln[i - 1] == '>' || g_ln[i - 1] == '<'))
 				flag = 1;
 			else
 				return (double_redirection_error(s, i));
@@ -47,18 +35,18 @@ int	ft_double_semicolon_check(t_minishell *s)
 
 	flag = TRUE;
 	i = -1;
-	while (line[++i])
+	while (g_ln[++i])
 	{
-		i += skip_quotes(&line[i]);
-		if (line[i] == ';' && flag == TRUE)
+		i += skip_quotes(&g_ln[i]);
+		if (g_ln[i] == ';' && flag == TRUE)
 		{
 			printf("-bash: syntax error near unexpected token `;'\n");
 			s->exit_status = 258;
 			return (TRUE);
 		}
-		else if (line[i] == ';' && flag == FALSE)
+		else if (g_ln[i] == ';' && flag == FALSE)
 			flag = TRUE;
-		else if (line[i] == ' ')
+		else if (g_ln[i] == ' ')
 			continue ;
 		else
 			flag = FALSE;
@@ -68,24 +56,24 @@ int	ft_double_semicolon_check(t_minishell *s)
 
 void	get_redirection_marks_apart(int i, char *tmp, char *tmp2)
 {
-	while (line[++i])
+	while (g_ln[++i])
 	{
-		i += skip_quotes(&line[i]);
-		if ((line[i] == '<' || line[i] == '>') && i > 0 && line[i - 1] != '\\'
-			&& line[i - 1] != '<' && line[i - 1] != '>' && line[i - 1] != ' ')
+		i += skip_quotes(&g_ln[i]);
+		if ((g_ln[i] == '<' || g_ln[i] == '>') && i > 0 && g_ln[i - 1] != '\\'
+			&& g_ln[i - 1] != '<' && g_ln[i - 1] != '>' && g_ln[i - 1] != ' ')
 		{
-			tmp = ft_substr(line, 0, i);
-			tmp2 = ft_strjoin(" ", &line[i]);
-			free(line);
-			line = ft_strjoin(tmp, tmp2);
+			tmp = ft_substr(g_ln, 0, i);
+			tmp2 = ft_strjoin(" ", &g_ln[i]);
+			free(g_ln);
+			g_ln = ft_strjoin(tmp, tmp2);
 		}
-		if ((line[i] == '<' || line[i] == '>') && (line[i + 1] != '<' && \
-			line[i + 1] != '>' && line[i + 1] != ' '))
+		if ((g_ln[i] == '<' || g_ln[i] == '>') && (g_ln[i + 1] != '<' && \
+			g_ln[i + 1] != '>' && g_ln[i + 1] != ' '))
 		{
-			tmp = ft_substr(line, 0, i + 1);
-			tmp2 = ft_strjoin(" ", &line[i + 1]);
-			free(line);
-			line = ft_strjoin(tmp, tmp2);
+			tmp = ft_substr(g_ln, 0, i + 1);
+			tmp2 = ft_strjoin(" ", &g_ln[i + 1]);
+			free(g_ln);
+			g_ln = ft_strjoin(tmp, tmp2);
 		}
 		if (tmp)
 			tmp = ft_free_ptr(tmp);
@@ -99,20 +87,20 @@ int	check_incomplete_pipes(t_minishell *s)
 	int		i;
 
 	i = -1;
-	while (line[++i])
+	while (g_ln[++i])
 	{
-		i += skip_quotes(&line[i]);
-		if (line[i] == '|')
+		i += skip_quotes(&g_ln[i]);
+		if (g_ln[i] == '|')
 		{
-			while (line[i + 1] == ' ')
+			while (g_ln[i + 1] == ' ')
 				i++;
-			if (line[i + 1] == '\0' || line[i + 1] == '|')
+			if (g_ln[i + 1] == '\0' || g_ln[i + 1] == '|')
 			{
 				printf("-bash: syntax error near unexpected token `|'\n");
 				s->exit_status = 258;
 				return (1);
 			}
-			else if (line[i + 1] == ';')
+			else if (g_ln[i + 1] == ';')
 			{
 				printf("-bash: syntax error near unexpected token `;'\n");
 				s->exit_status = 258;
@@ -123,17 +111,6 @@ int	check_incomplete_pipes(t_minishell *s)
 	return (0);
 }
 
-/*
-** Function ft_process_line() receives the line written on the terminal and
-** take care of the steps needed in order to execute all the commands.
-** First of all, it splits the line into the different commands separated by
-** the ';' character. Then process, one by one, every command.
-** For each command follow the next steps. First, it split the command into
-** tokens. Then get variable expansion done through the function
-** check_env_var(). The next step it would be get all the paths where the
-** commands should be searched for. And finally, try to execute the command.
-** At the end, function frees the variables that should be freed.
-*/
 void	ft_process_line(t_minishell *s)
 {
 	int		i;
@@ -142,7 +119,7 @@ void	ft_process_line(t_minishell *s)
 		check_double_redirection_marks(s) || check_incomplete_pipes(s))
 		return ;
 	get_redirection_marks_apart(-1, NULL, NULL);
-	s->commands = special_split(line, ';');
+	s->commands = special_split(g_ln, ';');
 	i = -1;
 	while (s->commands[++i])
 	{

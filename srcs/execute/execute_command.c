@@ -19,22 +19,10 @@ void	ft_child_process(t_minishell *s)
 		ft_print_error(s);
 }
 
-/*
-** Function ft_execute_command() search if there is a command to execute in the
-** s->command_path. If there is not such command, print error and returns.
-** Other than that, creates a child process where tries to run the command usin
-** execve() function. On succes execve() doesn't return. If there is an error,
-** errno is set, so error message can be printed.
-** Parent process wait until child process is done. And using WEXITSTATUS set
-** the return value from the command executed in the child process to be
-** consulted with "echo $?" command.
-*/
-
 void	ft_execute_command(t_minishell *s)
 {
 	pid_t	child_pid;
 	int		stat_loc;
-	char	*path;
 
 	if (!s->command_path)
 	{

@@ -45,8 +45,8 @@ void	*ft_free_matrix(char **matrix)
 
 void	ft_clean_up(t_minishell *s)
 {
-	if (line != NULL)
-		line = ft_free_ptr(line);
+	if (g_ln != NULL)
+		g_ln = ft_free_ptr(g_ln);
 	if (s->home != NULL)
 		s->home = ft_free_ptr(s->home);
 	if (s->commands != NULL)
@@ -75,7 +75,7 @@ int	ft_str_is_printable_ascii(char *s)
 	if (!s)
 		return (0);
 	i = 0;
-	while (s[i] >= 32 && s[i] <= 254)
+	while (s[i] >= 32)
 		i++;
 	if (s[i] == '\0')
 		return (1);

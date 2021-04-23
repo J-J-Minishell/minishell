@@ -1,6 +1,6 @@
 NAME =	minishell
 CC =	gcc
-FLAGS = -g -c
+FLAGS = -c -Wall -Wextra -Werror
 OBJS =	$(SRCS:.c=.o)
 SRCS =	srcs/blts/blt_unset.c srcs/blts/blt_export.c srcs/blts/blt_env.c \
 		srcs/blts/blt_pwd.c srcs/blts/blt_cd.c srcs/blts/blt_echo.c \
@@ -12,7 +12,7 @@ SRCS =	srcs/blts/blt_unset.c srcs/blts/blt_export.c srcs/blts/blt_env.c \
 		srcs/utils/utils2.c srcs/utils/utils3.c srcs/utils/special_split.c \
         srcs/minishell.c
 INC = -I. -I srcs/libft
-LFT = -L srcs/libft -lft									# No entiendo que es -lft pero sin ello no funciona
+LFT = -L srcs/libft -lft
 
 minishell: $(SRCS)
 	make -C srcs/libft

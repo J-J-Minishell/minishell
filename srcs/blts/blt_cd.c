@@ -1,12 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** This function is the second part of the change_pwd() function. Here getcwd()
-** is called. But a memory block should be allocated to contain the buffer
-** where the path will be saved. Realloc is used in case the buffer would need
-** more space.
-*/
-
 char	*get_cwd(t_minishell *s, int size)
 {
 	char	*tmp;
@@ -28,13 +21,6 @@ char	*get_cwd(t_minishell *s, int size)
 	return (buf);
 }
 
-/*
-** When the current directory is changed by cd command, it is necessary to
-** update the PWD environment variable. In order to do that, this function
-** first save the the actual value in OLDPWD and then calls get_cwd() to
-** save the new value in PWD.
-*/
-
 void	change_pwd(t_minishell *s)
 {
 	int		i;
@@ -55,16 +41,6 @@ void	change_pwd(t_minishell *s)
 		s->exit_status = 0;
 	}
 }
-
-/*
-** This functions checks if the argument for cd command is one of this two
-** cases: '~' or '-'. If the first one is found, it changes the token to
-** put the HOME path instead '~'. If HOME environment variable does not
-** exists, it takes the value from other variable the program use to stores it.
-** If the '-' character is found, the function uses the variable OLDPWD to
-** get the path of the previous working directory and make the substitution.
-** If OLDPWD doesn't exist an error message is printed.
-*/
 
 void	special_chars_cd(t_minishell *s, char *tmp, int i)
 {
@@ -94,23 +70,8 @@ void	special_chars_cd(t_minishell *s, char *tmp, int i)
 	}
 }
 
-/*
-** This function first checks if the argument is surrounded by quotes or double
-** quotes. If that is the case, it removes the quotes before continuing the
-** execution. If there are no quotes, goes to check if the argument is one of
-** the special cases, like '~' that changes to HOME directory, or '-' that
-** changes to the previous directory in case there is one. Function
-** special_chars_cd() changes token with the special character for the
-** corresponding path.
-** Then, function continues trying to make the working directory change using
-** the system function chdir(). This function returns 0 in case of success or
-** -1 in case of error. In case of error, message is printed and exit status is
-** set properly. In case of success function change_pwd() is called.
-*/
-
 void	cd_with_arguments(t_minishell *s)
 {
-	int		i;
 	char	*tmp;
 
 	if (s->tokens[1][0] == '"' || s->tokens[1][0] == '\'')
@@ -123,7 +84,7 @@ void	cd_with_arguments(t_minishell *s)
 		s->tokens[1] = tmp;
 	}
 	else
-		special_chars_cd(s, tmp, i);
+		special_chars_cd(s, NULL, 0);
 	if (chdir(s->tokens[1]) == 0)
 		change_pwd(s);
 	else
@@ -135,16 +96,6 @@ void	cd_with_arguments(t_minishell *s)
 		s->exit_status = 1;
 	}
 }
-
-/*
-** The function blt_cd() implements the built-in command 'cd' in our program.
-** It has two main blocks. One that takes care of those cases in which there is
-** no arguments, changing the work path to the HOME directory. If HOME variable
-** exists there is no problem but, in other case, prints an error and set the
-** exit status properly.
-** The other, when there is an argument, it calls cd_with_arguments() to get
-** the job done.
-*/
 
 void	blt_cd(t_minishell *s)
 {

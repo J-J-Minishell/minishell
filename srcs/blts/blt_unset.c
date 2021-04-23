@@ -17,7 +17,7 @@ int	print_unset_error(char *token)
 	return (1);
 }
 
-void	unset_env_var(t_minishell *s, char *unset_var, int delete)
+void	unset_env_var(t_minishell *s, int delete)
 {
 	char	**tmp;
 	int		i;
@@ -60,7 +60,7 @@ void	blt_unset(t_minishell *s)
 			exit = print_unset_error(s->tokens[i]);
 		else if (j >= 0)
 		{
-			unset_env_var(s, s->tokens[i], j);
+			unset_env_var(s, j);
 			exit = (exit == 1);
 		}
 		i++;

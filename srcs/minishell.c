@@ -9,7 +9,7 @@ void	change_terminal_termios(t_minishell *s)
 	newt = oldt;
 	newt.c_lflag &= ~(ICANON);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ft_read_line(s);
+	ft_read_line(s, s->n_cmds, '\0');
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 }
 
@@ -20,7 +20,7 @@ static void	sig_handler(int sig)
 		ft_putstr_fd("\033[2D\033[0K", 2);
 		write(1, "\n", 1);
 		write(1, "$> ", 3);
-		line = ft_free_ptr(line);
+		g_ln = ft_free_ptr(g_ln);
 	}
 	else if (sig == SIGQUIT)
 		ft_putstr_fd("\033[2D\033[0K", 2);
@@ -39,11 +39,14 @@ int	main(int argc, char *argv[], char **envp)
 		signal(SIGQUIT, sig_handler);
 		signal(SIGINT, sig_handler);
 		change_terminal_termios(&s);
-		if (line[0] != '\0')
+		if (g_ln[0] != '\0')
 			ft_process_line(&s);
-		if (line != NULL)
-			line = ft_free_ptr(line);
+		if (g_ln != NULL)
+			g_ln = ft_free_ptr(g_ln);
 	}
+	argc = 1;
+	if (argv)
+		free(argv);
 	return (0);
 }
 
@@ -71,7 +74,7 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 
 void	ft_initialize_variables(t_minishell *s)
 {
-	line = NULL;
+	g_ln = NULL;
 	s->env = NULL;
 	s->tokens = NULL;
 	s->commands = NULL;

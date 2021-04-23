@@ -1,9 +1,5 @@
 #include "../../includes/minishell.h"
 
-/*
-** Function in charge of get the characters inside quotes block printed.
-*/
-
 int	quotes(t_minishell *s, int i, int j)
 {
 	int		single_q;
@@ -26,17 +22,10 @@ int	quotes(t_minishell *s, int i, int j)
 	return (j);
 }
 
-/*
-** This function search in each token passed to echo command if there is the
-** '~' character alone. If it is found the function get the character
-** replaced for the home path stored in the HOME variable.
-*/
-
 void	check_special_tokens(t_minishell *s)
 {
 	int		i;
 	char	*tmp;
-	int		j;
 
 	i = 1;
 	while (s->tokens[i])
@@ -54,16 +43,9 @@ void	check_special_tokens(t_minishell *s)
 	}
 }
 
-/*
-** This function checks if there should be a newline printed or not. When there
-** is a '-' character at the beginning of the token and it is followed by one
-** or more 'n' characters the flag new line is deactivated.
-*/
-
-int	flag_newline(t_minishell *s, char *token)
+int	flag_newline(char *token)
 {
 	int	i;
-	int	j;
 	int	newline;
 
 	newline = FALSE;
@@ -85,15 +67,6 @@ int	flag_newline(t_minishell *s, char *token)
 	return (newline);
 }
 
-/*
-** This function is in charge of print the arguments passed to echo command.
-** If double or single quotes are present in an argument it calls quotes()
-** function to take care of that. This function also consider the case when
-** there is a '\'. The next character next to it will not be printed. If the
-** character is not next to a counterbar it will be printed.
-** And finally, if there are more arguments a space will be printed.
-*/
-
 void	print_tokens(t_minishell *s, int i)
 {
 	int	j;
@@ -110,25 +83,15 @@ void	print_tokens(t_minishell *s, int i)
 		write(s->fd, " ", 1);
 }
 
-/*
-** This function starts calling check_special_tokens() in order to look if one
-** of the tokens is '~'. In that case the token is replaced for HOME path. Then
-** it checks if a new line should be printed at the end. In order to do that it
-** calls the function flag_newline() that will set the flag newline. Next step
-** is get the arguments to echo printed. Function print_tokens() will do that.
-** And finaly it will print newline if the flag is active.
-*/
-
 void	cmd_echo(t_minishell *s)
 {
 	int		i;
-	int		j;
 	int		newline;
 
 	check_special_tokens(s);
 	newline = TRUE;
 	i = 0;
-	while (flag_newline(s, s->tokens[++i]))
+	while (flag_newline(s->tokens[++i]))
 		newline = FALSE;
 	while (s->tokens[i])
 	{
