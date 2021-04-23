@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstmap.c                                        :+:      :+:    :+:   */
+/*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgalian- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jgalian- <jgalian-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 07:36:03 by jgalian-          #+#    #+#             */
-/*   Updated: 2019/12/10 09:25:08 by jgalian-         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:47:04 by jgalian-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list		*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*))
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*))
 {
 	t_list	*new;
 	t_list	*tmp;
@@ -21,12 +21,14 @@ t_list		*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*))
 	if (!lst && !del)
 		return (NULL);
 	aux = lst;
-	if (!(new = ft_lstnew(f(aux->content))))
+	new = ft_lstnew(f(aux->content));
+	if (!new)
 		return (NULL);
 	aux = aux->next;
 	while (aux)
 	{
-		if (!(tmp = ft_lstnew(f(aux->content))))
+		tmp = ft_lstnew(f(aux->content));
+		if (!tmp)
 			return (NULL);
 		ft_lstadd_back(&new, tmp);
 		aux = aux->next;
