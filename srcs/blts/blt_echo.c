@@ -1,5 +1,9 @@
 #include "../../includes/minishell.h"
 
+/*
+** Function in charge of get the characters inside quotes block printed.
+*/
+
 int	quotes(t_minishell *s, int i, int j)
 {
 	int		single_q;
@@ -20,62 +24,6 @@ int	quotes(t_minishell *s, int i, int j)
 		}
 	}
 	return (j);
-}
-
-/*
-** This function
-*/
-
-int	flag_newline(t_minishell *s, char *token)
-{
-	int	i;
-	int	j;
-	int	newline;
-
-	newline = FALSE;
-	i = 0;
-	if (token[i] == '-' && token[i + 1] == 'n')
-	{
-		newline = TRUE;
-		while (token[++i] != '\0')
-		{
-			if (token[i] != 'n')
-			{
-				newline = FALSE;
-				break ;
-			}
-		}
-		if (newline == TRUE)
-			return (newline);
-	}
-	return (newline);
-
-	// newline = FALSE;
-	// i = 0;
-	// while (s->tokens[++i])
-	// {
-	// 	j = 0;
-	// 	if (s->tokens[i][j] == '-' && s->tokens[i][j + 1] == 'n')
-	// 	{
-	// 		newline = TRUE;
-	// 		while (s->tokens[i][++j] != '\0')
-	// 		{
-	// 			if (s->tokens[i][j] != 'n')
-	// 			{
-	// 				newline = FALSE;
-	// 				break ;
-	// 			}
-	// 		}
-	// 		if (newline == TRUE)
-	// 			return (TRUE);
-	// 	}
-	//}
-
-	// i = 1;
-	// while (s->tokens[i] && s->tokens[i][0] != '\0' && \
-	// 	ft_strncmp(s->tokens[i], "-n", ft_strlen(s->tokens[i])) == 0)
-	// 	i++;
-	// return (i);
 }
 
 /*
@@ -107,9 +55,68 @@ void	check_special_tokens(t_minishell *s)
 }
 
 /*
+** This function checks if there should be a newline printed or not. When there
+** is a '-' character at the beginning of the token and it is followed by one
+** or more 'n' characters the flag new line is deactivated.
+*/
+
+int	flag_newline(t_minishell *s, char *token)
+{
+	int	i;
+	int	j;
+	int	newline;
+
+	newline = FALSE;
+	i = 0;
+	if (token[i] == '-' && token[i + 1] == 'n')
+	{
+		newline = TRUE;
+		while (token[++i] != '\0')
+		{
+			if (token[i] != 'n')
+			{
+				newline = FALSE;
+				break ;
+			}
+		}
+		if (newline == TRUE)
+			return (newline);
+	}
+	return (newline);
+}
+
+/*
+** This function is in charge of print the arguments passed to echo command.
+** If double or single quotes are present in an argument it calls quotes()
+** function to take care of that. This function also consider the case when
+** there is a '\'. The next character next to it will not be printed. If the
+** character is not next to a counterbar it will be printed.
+** And finally, if there are more arguments a space will be printed.
+*/
+
+void	print_tokens(t_minishell *s, int i)
+{
+	int	j;
+
+	j = -1;
+	while (s->tokens[i][++j])
+	{
+		if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
+			j = quotes(s, i, j);
+		else if (s->tokens[i][j] != '\\')
+			write(s->fd, s->tokens[i] + j, 1);
+	}
+	if (j && s->tokens[i + 1])
+		write(s->fd, " ", 1);
+}
+
+/*
 ** This function starts calling check_special_tokens() in order to look if one
-** of the tokens is '~'. In that case the token is replaced for HOME path.
-**
+** of the tokens is '~'. In that case the token is replaced for HOME path. Then
+** it checks if a new line should be printed at the end. In order to do that it
+** calls the function flag_newline() that will set the flag newline. Next step
+** is get the arguments to echo printed. Function print_tokens() will do that.
+** And finaly it will print newline if the flag is active.
 */
 
 void	cmd_echo(t_minishell *s)
@@ -125,16 +132,7 @@ void	cmd_echo(t_minishell *s)
 		newline = FALSE;
 	while (s->tokens[i])
 	{
-		j = -1;
-		while (s->tokens[i][++j])
-		{
-			if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
-				j = quotes(s, i, j);
-			else if (s->tokens[i][j] != '\\')
-				write(s->fd, s->tokens[i] + j, 1);
-		}
-		if (j && s->tokens[i + 1])
-			write(s->fd, " ", 1);
+		print_tokens(s, i);
 		i++;
 	}
 	if (newline)

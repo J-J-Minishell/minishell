@@ -1,5 +1,11 @@
 #include "../../includes/minishell.h"
 
+/*
+** This function manage the situation when export command is called with no
+** arguments. It will print every environment variable with the statement
+** "declare -x" fordward to them.
+*/
+
 void	export(t_minishell *s)
 {
 	int	i;
@@ -49,6 +55,14 @@ void	export_env_var(t_minishell *s, char *export_var, int len_name)
 	s->env = add_new_pos_matrix(s->env, export_var);
 }
 
+/*
+** This function first check if the initial character of the name of the
+** variable that should be exported is alphabetic. In case it is not, it calls
+** print_export_error() because this first char should be alphabetic.
+** Then, is looks if the character is now analyzing is '=' or '\'. In that
+** case returns to the caller. If it is not one of those,
+*/
+
 int	check_export_error(t_minishell *s, int i, int j)
 {
 	if (j == 0 && !ft_isalpha(s->tokens[i][j]))
@@ -66,16 +80,24 @@ int	check_export_error(t_minishell *s, int i, int j)
 	return (0);
 }
 
+/*
+** This function first check if export command was called with no arguments.
+** In that case, it calls export_no_arguments() function. If not, it starts
+** exploring the arguments. If a character not allowed in an environment
+** variable is detected, function check_export_error() is called. If '='
+** character is detected function export_env_variable() is called in order
+** to create or actualize the variable with the information next to the
+** equal sign.
+*/
+
 void	blt_export(t_minishell *s)
 {
 	int		i;
 	int		j;
-	int		exit;
 
 	i = 1;
 	if (!s->tokens[i])
 		export(s);
-	exit = 0;
 	while (s->tokens[i])
 	{
 		j = 0;

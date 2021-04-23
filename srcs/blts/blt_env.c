@@ -1,5 +1,10 @@
 #include "../../includes/minishell.h"
 
+/*
+** Simple function that goes over all the environment variables and get them
+** printed.
+*/
+
 void	blt_env(t_minishell *s)
 {
 	int	i;
