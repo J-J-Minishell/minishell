@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgalian- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jbaringo <jbaringo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/05 08:16:02 by jgalian-          #+#    #+#             */
-/*   Updated: 2019/12/05 09:31:54 by jgalian-         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:42:41 by jbaringo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char		*ft_next_word(const char *s, char c)
+static char	*ft_next_word(const char *s, char c)
 {
 	while (*s != '\0' && *s == c)
 		s++;
-	return ((char*)s);
+	return ((char *)s);
 }
 
-static int		ft_count_words(const char *s, char c)
+static int	ft_count_words(const char *s, char c)
 {
 	int		w;
 	int		i;
@@ -39,7 +39,7 @@ static int		ft_count_words(const char *s, char c)
 	return (w);
 }
 
-static int		ft_count_chars(const char *s, char c)
+static int	ft_count_chars(const char *s, char c)
 {
 	int		i;
 
@@ -49,7 +49,7 @@ static int		ft_count_chars(const char *s, char c)
 	return (i);
 }
 
-static void		ft_clean(char **out, int w)
+static void	ft_clean(char **out, int w)
 {
 	while (w)
 	{
@@ -59,7 +59,7 @@ static void		ft_clean(char **out, int w)
 	free(out);
 }
 
-char			**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	int		wordcount;
 	int		w;
@@ -68,13 +68,15 @@ char			**ft_split(char const *s, char c)
 	if (!s)
 		return (NULL);
 	wordcount = ft_count_words(s, c);
-	if (!(out = (char**)malloc(sizeof(char*) * (wordcount + 1))))
+	out = (char **)malloc(sizeof(char *) * (wordcount + 1));
+	if (!out)
 		return (NULL);
 	w = 0;
 	while (w < wordcount)
 	{
 		s = ft_next_word(s, c);
-		if (!(out[w] = ft_substr(s, 0, ft_count_chars(s, c))))
+		out[w] = ft_substr(s, 0, ft_count_chars(s, c));
+		if (!out)
 		{
 			ft_clean(out, w - 1);
 			return (NULL);

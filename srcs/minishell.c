@@ -1,34 +1,16 @@
-// valgrind --leak-check=full \
-// 			--show-leak-kinds=all \
-// 			--track-origins=yes \
-// 			--verbose \
-// 			--log-file=valgrind-out.txt \
-// 			./minishell
-
 #include "../includes/minishell.h"
 
 void	change_terminal_termios(t_minishell *s)
 {
-	static struct termios oldt;
-	static struct termios newt;
+	static struct termios	oldt;
+	static struct termios	newt;
 
-	/* tcgetattr obtiene la configuración actual del terminal
-	STDIN_FILENO se utiliza para escribir la configuración en oldt */
-	tcgetattr( STDIN_FILENO, &oldt);
-	/* se hace una copia de la configuración */
+	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
-
-	/* se deshabilita el flag ICANON */
-	newt.c_lflag &= ~(ICANON);          
-
-	/* se envia la nueva configuración a STDIN
-	usamos TCSANOW para modificar la configuración. */
-	tcsetattr( STDIN_FILENO, TCSANOW, &newt);
-
+	newt.c_lflag &= ~(ICANON);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 	ft_read_line(s);
-
-	/* se restaura la configuración original */
-	tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 }
 
 static void	sig_handler(int sig)
@@ -44,50 +26,54 @@ static void	sig_handler(int sig)
 		ft_putstr_fd("\033[2D\033[0K", 2);
 }
 
-int		main(int argc, char *argv[], char **envp)
+int	main(int argc, char *argv[], char **envp)
 {
 	t_minishell	s;
 
-	errno = 0;										// Set errno value to 0
-	ft_initialize_variables(&s);					// Initialice variables to NULL to freed them only if they have a real value
-	ft_get_env_variables(&s, envp);					// Save all environment variables
+	errno = 0;
+	ft_initialize_variables(&s);
+	ft_get_env_variables(&s, envp);
 	while (TRUE)
 	{
-		write(1, "$> ", 3);							// Print minishell prompt
+		write(1, "$> ", 3);
 		signal(SIGQUIT, sig_handler);
 		signal(SIGINT, sig_handler);
 		change_terminal_termios(&s);
 		if (line[0] != '\0')
-			ft_process_line(&s);						// Procces and execute commands
+			ft_process_line(&s);
 		if (line != NULL)
-			line = ft_free_ptr(line);				// Freed 'line' between loop interactions
+			line = ft_free_ptr(line);
 	}
 	return (0);
 }
 
 void	ft_get_env_variables(t_minishell *s, char **envp)
 {
-	int			i;
-	int			n;
+	int	i;
+	int	n;
 
 	n = 0;
-	while (envp[n])									// Count number of environment variables
+	while (envp[n])
 		n++;
-	if (!(s->env = (char **)malloc(sizeof(char *) * (n + 1))))		// Alloc memory to copy the environment variables...
-		ft_print_error(s);											// ...from envp to an internal variable
+	s->env = (char **)malloc(sizeof(char *) * (n + 1));
+	if (!s->env)
+		ft_print_error(s);
 	i = -1;
 	while (++i < n)
-		s->env[i] = ft_strdup(envp[i]);				// Copying external env. variables to my local env variable
+		s->env[i] = ft_strdup(envp[i]);
 	s->env[i] = NULL;
 	i = ft_find_env_var(s, "HOME=");
-	s->home = i >= 0 ? ft_strdup(s->env[i]) : NULL;
+	if (i >= 0)
+		s->home = ft_strdup(s->env[i]);
+	else
+		s->home = NULL;
 }
 
 void	ft_initialize_variables(t_minishell *s)
 {
-	line = NULL;									// Initialize all this variables with NULL to setup a conditional free at...
-	s->env = NULL;									// ...the end onĺy in case they now have a value
-	s->tokens = NULL;								//
+	line = NULL;
+	s->env = NULL;
+	s->tokens = NULL;
 	s->commands = NULL;
 	s->env_address = NULL;
 	s->command_path = NULL;
@@ -97,7 +83,8 @@ void	ft_initialize_variables(t_minishell *s)
 	s->new_hist_cmd = NULL;
 	s->fd = 1;
 	s->fdi = 0;
-	if (!(s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1))))
+	s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1));
+	if (!s->blt_cmds)
 		ft_print_error(s);
 	s->blt_cmds[0] = ft_strdup("echo");
 	s->blt_cmds[1] = ft_strdup("cd");
@@ -108,4 +95,3 @@ void	ft_initialize_variables(t_minishell *s)
 	s->blt_cmds[6] = ft_strdup("exit");
 	s->blt_cmds[7] = NULL;
 }
-

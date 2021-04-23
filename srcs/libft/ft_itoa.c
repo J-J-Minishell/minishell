@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgalian- <jgalian-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jbaringo <jbaringo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/23 13:31:37 by jgalian-          #+#    #+#             */
-/*   Updated: 2021/04/23 11:39:11 by jgalian-         ###   ########.fr       */
+/*   Updated: 2021/04/23 11:58:35 by jbaringo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,16 @@ static long int	ft_intlen(long int n)
 		return (len + 1);
 }
 
+char	*put_nb(int nb, int len, char *str)
+{
+	while (nb > 0)
+	{
+		str[--len] = (nb % 10) + 48;
+		nb /= 10;
+	}
+	return (str);
+}
+
 char	*ft_itoa(int n)
 {
 	char		*str;
@@ -38,7 +48,8 @@ char	*ft_itoa(int n)
 
 	nb = (long int)n;
 	len = ft_intlen(nb);
-	if (!(str = (char*)malloc(sizeof(char) * (len + 1))))
+	str = (char *)malloc(sizeof(char) * (len + 1));
+	if (!str)
 		return (NULL);
 	str[len] = '\0';
 	if (nb == 0)
@@ -51,10 +62,5 @@ char	*ft_itoa(int n)
 		str[0] = '-';
 		nb *= -1;
 	}
-	while (nb > 0)
-	{
-		str[--len] = (nb % 10) + 48;
-		nb /= 10;
-	}
-	return (str);
+	return (put_nb(nb, len, str));
 }
