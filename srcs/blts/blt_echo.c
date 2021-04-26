@@ -88,15 +88,18 @@ void	cmd_echo(t_minishell *s)
 	int		i;
 	int		newline;
 
-	check_special_tokens(s);
-	newline = TRUE;
-	i = 0;
-	while (flag_newline(s->tokens[++i]))
-		newline = FALSE;
-	while (s->tokens[i])
+	if (s->tokens[1])
 	{
-		print_tokens(s, i);
-		i++;
+		check_special_tokens(s);
+		newline = TRUE;
+		i = 0;
+		while (flag_newline(s->tokens[++i]))
+			newline = FALSE;
+		while (s->tokens[i])
+		{
+			print_tokens(s, i);
+			i++;
+		}
 	}
 	if (newline)
 		write(s->fd, "\n", 1);

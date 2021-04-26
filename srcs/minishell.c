@@ -30,6 +30,8 @@ int	main(int argc, char *argv[], char **envp)
 {
 	t_minishell	s;
 
+	if (!argc)
+		return (-1);
 	errno = 0;
 	ft_initialize_variables(&s);
 	ft_get_env_variables(&s, envp);
@@ -44,7 +46,6 @@ int	main(int argc, char *argv[], char **envp)
 		if (g_ln != NULL)
 			g_ln = ft_free_ptr(g_ln);
 	}
-	argc = 1;
 	if (argv)
 		free(argv);
 	return (0);
@@ -67,7 +68,7 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 	s->env[i] = NULL;
 	i = ft_find_env_var(s, "HOME=");
 	if (i >= 0)
-		s->home = ft_strdup(s->env[i]);
+		s->home = ft_strdup(s->env[i] + 5);
 	else
 		s->home = NULL;
 }

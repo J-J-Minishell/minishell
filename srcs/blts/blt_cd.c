@@ -89,10 +89,7 @@ void	cd_with_arguments(t_minishell *s)
 		change_pwd(s);
 	else
 	{
-		ft_putstr_fd("-bash: cd: ", 0);
-		ft_putstr_fd(s->tokens[1], 0);
-		ft_putstr_fd(": No such file or directory", 0);
-		write (0, "\n", 1);
+		printf("-bash: cd: %s: %s\n", s->tokens[1], strerror(errno));
 		s->exit_status = 1;
 	}
 }
@@ -113,7 +110,7 @@ void	blt_cd(t_minishell *s)
 		}
 		else
 		{
-			ft_putstr_fd("-bash: cd: HOME not set", 0);
+			printf("-bash: cd: HOME not set\n");
 			s->exit_status = 1;
 		}
 	}

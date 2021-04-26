@@ -1,6 +1,6 @@
 NAME =	minishell
 CC =	gcc
-FLAGS = -c -Wall -Wextra -Werror
+FLAGS = -c -Wall -Wextra -Werror -g
 OBJS =	$(SRCS:.c=.o)
 SRCS =	srcs/blts/blt_unset.c srcs/blts/blt_export.c srcs/blts/blt_env.c \
 		srcs/blts/blt_pwd.c srcs/blts/blt_cd.c srcs/blts/blt_echo.c \
@@ -10,7 +10,7 @@ SRCS =	srcs/blts/blt_unset.c srcs/blts/blt_export.c srcs/blts/blt_env.c \
 		srcs/parsing_line/process_line.c srcs/parsing_line/read_line.c \
 		srcs/parsing_line/redirections.c srcs/utils/utils.c \
 		srcs/utils/utils2.c srcs/utils/utils3.c srcs/utils/special_split.c \
-        srcs/minishell.c
+        srcs/minishell.c srcs/blts/blt_exit.c
 INC = -I. -I srcs/libft
 LFT = -L srcs/libft -lft
 

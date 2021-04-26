@@ -92,6 +92,8 @@ void	child_sig_handler(int sig);
 
 int		ft_counterbar_before_expansion(t_minishell *s, int i, int j);
 
+void	blt_exit(t_minishell *s);
+
 # define TRUE 1
 # define FALSE 0
 # define INPUT_BUFFER_SIZE 5

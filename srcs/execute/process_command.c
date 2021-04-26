@@ -8,22 +8,21 @@ void	no_blt(t_minishell *s)
 	{
 		ft_putstr_fd("-bash: ", 0);
 		ft_putstr_fd(s->tokens[0], 0);
-		ft_putstr_fd(": No such file or directory\n", 0);
+		ft_putstr_fd(": command not found\n", 0);
 		s->exit_status = 127;
 		return ;
 	}
-	else
+	else if ((st.st_mode & !S_IRWXU) || (st.st_mode & S_IFDIR))
 	{
+		ft_putstr_fd("-bash: ", 0);
+		ft_putstr_fd(s->tokens[0], 0);
 		if (st.st_mode & !S_IRWXU)
-		{
-			ft_putstr_fd("-bash: ", 0);
-			ft_putstr_fd(s->tokens[0], 0);
 			ft_putstr_fd(": Permission denied\n", 0);
-			s->exit_status = 126;
-			return ;
-		}
-		ft_execute_command(s);
+		else
+			ft_putstr_fd(": is a directory\n", 0);
+		return ;
 	}
+	ft_execute_command(s);
 }
 
 void	ft_process_tokken(t_minishell *s)
@@ -48,8 +47,9 @@ void	ft_process_tokken(t_minishell *s)
 		blt_env(s);
 	else if (i == 6)
 	{
-		ft_clean_up(s);
-		exit(0);
+		blt_exit(s);
+		//ft_clean_up(s);
+		//exit(0);
 	}
 	else
 		no_blt(s);
