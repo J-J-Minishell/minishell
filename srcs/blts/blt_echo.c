@@ -14,7 +14,8 @@ int	quotes(t_minishell *s, int i, int j)
 		single_q *= (s->tokens[i][j] != '\'');
 		if (double_q || single_q)
 		{
-			if (s->tokens[i][j] == '\\' && j > 0 && s->tokens[i][j - 1] == '\\')
+			if (s->tokens[i][j] == '\\' && ((j > 0 && \
+				s->tokens[i][j - 1] == '\\') || s->tokens[i][j + 1] == '$'))
 				j++;
 			write(s->fd, s->tokens[i] + j, 1);
 		}
@@ -74,12 +75,13 @@ void	print_tokens(t_minishell *s, int i)
 	j = -1;
 	while (s->tokens[i][++j])
 	{
-		if (s->tokens[i][j] == '"' || s->tokens[i][j] == '\'')
+		if ((s->tokens[i][j] == '"' || s->tokens[i][j] == '\'') && \
+			check_backslash(s->tokens[i], j))
 			j = quotes(s, i, j);
 		else if (s->tokens[i][j] != '\\')
 			write(s->fd, s->tokens[i] + j, 1);
 	}
-	if (j && s->tokens[i + 1])
+	if (j && s->tokens[i + 1] && s->tokens[i + 1][0] != '\0')
 		write(s->fd, " ", 1);
 }
 
@@ -88,10 +90,10 @@ void	cmd_echo(t_minishell *s)
 	int		i;
 	int		newline;
 
+	newline = TRUE;
 	if (s->tokens[1])
 	{
 		check_special_tokens(s);
-		newline = TRUE;
 		i = 0;
 		while (flag_newline(s->tokens[++i]))
 			newline = FALSE;

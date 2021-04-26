@@ -6,9 +6,9 @@ void	no_blt(t_minishell *s)
 
 	if (stat(s->command_path, &st))
 	{
-		ft_putstr_fd("-bash: ", 0);
-		ft_putstr_fd(s->tokens[0], 0);
-		ft_putstr_fd(": command not found\n", 0);
+		ft_putstr_fd("-bash_no_blt: ", 2);
+		ft_putstr_fd(error_backslash_var(s, s->tokens[0]), 2);
+		ft_putstr_fd(": command not found\n", 2);
 		s->exit_status = 127;
 		return ;
 	}

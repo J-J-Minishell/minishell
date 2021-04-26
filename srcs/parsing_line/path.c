@@ -1,29 +1,42 @@
 #include "../../includes/minishell.h"
 
+void	check_actual_dir(t_minishell *s)
+{
+	char	*tmp;
+	char	*tmp2;
+	char	*actual_dir;
+
+	tmp = ft_get_env_var_content(s, "PWD");
+	tmp2 = ft_strjoin("/", s->tokens[0]);
+	actual_dir = ft_strjoin(tmp, tmp2);
+	tmp = ft_free_ptr(tmp);
+	tmp2 = ft_free_ptr(tmp2);
+	s->command_path = actual_dir;
+}
+
 void	ft_get_path(t_minishell *s)
 {
 	char	**paths;
 	char	*complete_path;
-	char	*temp;
+	char	*tmp;
 	char	*path;
 
 	if (s->tokens[0] && (s->tokens[0][0] == '.' || s->tokens[0][0] == '/'))
-		ft_abs_or_rel_path(s);
+		return (ft_abs_or_rel_path(s));
+	path = ft_get_env_var_content(s, "PATH");
+	if (path == NULL)
+		return (check_actual_dir(s));
 	else
 	{
-		path = ft_get_env_var_content(s, "PATH");
-		if (path == NULL)
-			;
-		else
-		{
-			paths = ft_split(path, ':');
-			temp = ft_check_dir(s, paths);
-			complete_path = ft_strjoin(temp, "/");
-			paths = ft_free_matrix(paths);
-			s->command_path = ft_strjoin(complete_path, s->tokens[0]);
-			complete_path = ft_free_ptr(complete_path);
-			path = ft_free_ptr(path);
-		}
+		paths = ft_split(path, ':');
+		tmp = ft_check_dir(s, paths);
+		if (!tmp)
+			return (check_actual_dir(s));
+		complete_path = ft_strjoin(tmp, "/");
+		paths = ft_free_matrix(paths);
+		s->command_path = ft_strjoin(complete_path, s->tokens[0]);
+		complete_path = ft_free_ptr(complete_path);
+		path = ft_free_ptr(path);
 	}
 }
 

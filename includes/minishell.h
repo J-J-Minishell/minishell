@@ -39,6 +39,9 @@ typedef struct s_minishell
 
 }				t_minishell;
 
+int		check_incomplete_pipes(t_minishell *s);
+int		check_double_redirection_marks(t_minishell *s);
+int		ft_double_semicolon_check(t_minishell *s);
 int		double_redirection_error(t_minishell *s, int i);
 int		check_backslash(char *str, int i);
 char	*error_backslash_var(t_minishell *s, char *token);

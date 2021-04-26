@@ -23,9 +23,11 @@ void	process_son(t_minishell *s, int *fds, int *flag)
 		while (j < 4)
 			close(fds[j++]);
 		check_env_var(s);
-		check_redirections(s);
-		ft_get_path(s);
-		ft_process_tokken(s);
+		if (check_redirections(s) != -1)
+		{
+			ft_get_path(s);
+			ft_process_tokken(s);
+		}
 		ft_clean_up(s);
 		s->pipe_commands = ft_free_matrix(s->pipe_commands);
 		s->command_path = ft_free_ptr(s->command_path);

@@ -71,7 +71,12 @@ int	check_in_redirections(t_minishell *s)
 			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
 			if (s->fdi == -1)
 			{
-				printf("-bash: %s: %s\n", s->tokens[2], strerror(errno));
+				ft_putstr_fd("-bash: ", 2);
+				ft_putstr_fd(s->tokens[2], 2);
+				ft_putstr_fd(": ", 2);
+				ft_putstr_fd(strerror(errno), 2);
+				write(2, "\n", 1);
+				s->fdi = 0;
 				s->exit_status = 1;
 				return (-1);
 			}

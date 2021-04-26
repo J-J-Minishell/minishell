@@ -24,13 +24,15 @@ void	ft_execute_command(t_minishell *s)
 	pid_t	child_pid;
 	int		stat_loc;
 
-	if (!s->command_path)
+/*	if (!s->command_path)
 	{
-		printf("-bash: %s: command not found\n",
-			error_backslash_var(s, s->tokens[0]));
+		ft_putstr_fd("-bash_execute: ", 2);
+		ft_putstr_fd(error_backslash_var(s, s->tokens[0]), 2);
+		ft_putstr_fd(": command not found\n", 2);
 		s->exit_status = 127;
 		return ;
 	}
+*/
 	signal(SIGINT, child_sig_handler);
 	signal(SIGQUIT, child_sig_handler);
 	child_pid = fork();
