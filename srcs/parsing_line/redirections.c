@@ -57,7 +57,7 @@ void	delete_in_redirections(t_minishell *s, int redirections, int i)
 	s->tokens = tokens;
 }
 
-void	check_in_redirections(t_minishell *s)
+int	check_in_redirections(t_minishell *s)
 {
 	int		i;
 	int		redirections;
@@ -69,12 +69,19 @@ void	check_in_redirections(t_minishell *s)
 		if (ft_strncmp(s->tokens[i], "<", 2) == 0)
 		{
 			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
+			if (s->fdi == -1)
+			{
+				printf("-bash: %s: %s\n", s->tokens[2], strerror(errno));
+				s->exit_status = 1;
+				return (-1);
+			}
 			redirections++;
 		}
 		i++;
 	}
 	if (redirections)
 		delete_in_redirections(s, redirections, i);
+	return (0);
 }
 
 int	output_redirections(t_minishell *s, int i, int redirections)
@@ -105,7 +112,7 @@ int	output_redirections(t_minishell *s, int i, int redirections)
 	return (redirections);
 }
 
-void	check_redirections(t_minishell *s)
+int	check_redirections(t_minishell *s)
 {
 	int		i;
 	int		redirections;
@@ -122,5 +129,7 @@ void	check_redirections(t_minishell *s)
 	}
 	if (redirections)
 		delete_redirections(s, redirections, i);
-	check_in_redirections(s);
+	if (check_in_redirections(s) == -1)
+		return (-1);
+	return (0);
 }

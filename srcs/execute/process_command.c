@@ -80,7 +80,8 @@ void	ft_process_command(t_minishell *s, int i)
 	{
 		s->tokens = special_split(s->commands[i], ' ');
 		check_env_var(s);
-		check_redirections(s);
+		if (check_redirections(s) == -1)
+			return ;
 		if (s->tokens[0])
 		{
 			ft_get_path(s);

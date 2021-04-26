@@ -44,7 +44,7 @@ int		check_backslash(char *str, int i);
 char	*error_backslash_var(t_minishell *s, char *token);
 int		skip_quotes(char *s);
 void	ft_process_command(t_minishell *s, int i);
-void	check_redirections(t_minishell *s);
+int		check_redirections(t_minishell *s);
 void	ft_pipes(t_minishell *s);
 void	ft_process_tokken(t_minishell *s);
 
