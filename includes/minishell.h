@@ -39,6 +39,7 @@ typedef struct s_minishell
 
 }				t_minishell;
 
+void	check_signal(t_minishell *s);
 int		check_incomplete_pipes(t_minishell *s);
 int		check_double_redirection_marks(t_minishell *s);
 int		ft_double_semicolon_check(t_minishell *s);
@@ -71,7 +72,7 @@ void	*ft_free_matrix(char **matrix);
 char	*ft_get_env_var_content(t_minishell *s, char *var);
 int		ft_find_env_var(t_minishell *s, char *var);
 
-void	ft_read_line(t_minishell *s, int index, char c);
+void	ft_read_line(t_minishell *s, int index, char c, char **tmp);
 
 void	ft_process_line(t_minishell *s);
 

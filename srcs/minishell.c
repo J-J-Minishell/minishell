@@ -9,7 +9,7 @@ void	change_terminal_termios(t_minishell *s)
 	newt = oldt;
 	newt.c_lflag &= ~(ICANON);
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ft_read_line(s, s->n_cmds, '\0');
+	ft_read_line(s, s->n_cmds, '\0', NULL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 }
 
@@ -21,6 +21,7 @@ static void	sig_handler(int sig)
 		write(1, "\n", 1);
 		write(1, "$> ", 3);
 		g_ln = ft_free_ptr(g_ln);
+		g_ln = ft_strdup("ctrl^C");
 	}
 	else if (sig == SIGQUIT)
 		ft_putstr_fd("\033[2D\033[0K", 2);

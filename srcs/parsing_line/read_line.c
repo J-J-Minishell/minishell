@@ -80,13 +80,12 @@ void	ft_read_line2(t_minishell *s, char **tmp, int index, char c)
 	g_ln = tmp1;
 }
 
-void	ft_read_line(t_minishell *s, int index, char c)
+void	ft_read_line(t_minishell *s, int index, char c, char **tmp)
 {
-	char	**tmp;
-
 	tmp = cpy_matrix(s->history_cmds, s->n_cmds);
 	while (read(0, &c, 1) && c != '\n' && (c != 4 || (g_ln && g_ln[0] != '\0')))
 	{
+		check_signal(s);
 		if (!g_ln)
 		{
 			index = s->n_cmds;
@@ -102,6 +101,7 @@ void	ft_read_line(t_minishell *s, int index, char c)
 		if (ft_str_is_printable_ascii(g_ln))
 			add_history_cmd(s, index);
 	}
+	check_signal(s);
 	if (c == 4)
 		signal_out(s, tmp);
 	ft_read_line2(s, tmp, index, c);
