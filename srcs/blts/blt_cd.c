@@ -9,6 +9,16 @@ char	*get_cwd(t_minishell *s, int size)
 	if (!buf)
 		ft_print_error(s);
 	tmp = getcwd(buf, size);
+	//if (!tmp)
+	// {
+	// 	ft_putstr_fd("cd: error retrieving current directory: getcwd: ", 2);
+	// 	ft_putstr_fd("cannot access parent directories: ", 2);
+	// 	ft_putstr_fd("No such file or directory\n", 2);
+	// 	s->exit_status = 1;
+	// 	return (tmp);
+	// }
+	// if (!tmp)
+	// {
 	while (tmp && errno == ERANGE)
 	{
 		size = size + 4096;
@@ -36,13 +46,15 @@ void	change_pwd(t_minishell *s)
 		buf = ft_free_ptr(buf);
 		s->env[i] = ft_free_ptr(s->env[i]);
 		buf = get_cwd(s, size);
+		// if (!buf)
+		// 	return ;
 		s->env[i] = ft_strjoin("PWD=", buf);
 		buf = ft_free_ptr(buf);
 		s->exit_status = 0;
 	}
 }
 
-void	special_chars_cd(t_minishell *s, char *tmp, int i)
+int	special_chars_cd(t_minishell *s, char *tmp, int i)
 {
 	if (s->tokens[1][0] == '~')
 	{
@@ -62,12 +74,16 @@ void	special_chars_cd(t_minishell *s, char *tmp, int i)
 		{
 			free(s->tokens[1]);
 			s->tokens[1] = ft_strdup(s->env[i] + 7);
-			ft_putstr_fd(s->tokens[1], 1);
-			write (0, "\n", 1);
+			ft_putstrs_fd(s->tokens[1], "\n", 0, 1);
 		}
 		else
-			ft_putstr_fd("-bash: cd: OLDPWD not set", 0);
+		{
+			ft_putstr_fd("-bash: cd: OLDPWD not set\n", 2);
+			s->exit_status = 1;
+			return (-1);
+		}
 	}
+	return (0);
 }
 
 void	cd_with_arguments(t_minishell *s)
@@ -84,12 +100,16 @@ void	cd_with_arguments(t_minishell *s)
 		s->tokens[1] = tmp;
 	}
 	else
-		special_chars_cd(s, NULL, 0);
+	{
+		if (special_chars_cd(s, NULL, 0) == -1)
+			return ;
+	}
 	if (chdir(s->tokens[1]) == 0)
 		change_pwd(s);
 	else
 	{
-		printf("-bash: cd: %s: %s\n", s->tokens[1], strerror(errno));
+		ft_putstrs_fd("-bash: cd: ", s->tokens[1], ": ", 2);
+		ft_putstrs_fd(strerror(errno), "\n", 0, 2);
 		s->exit_status = 1;
 	}
 }
@@ -110,7 +130,7 @@ void	blt_cd(t_minishell *s)
 		}
 		else
 		{
-			printf("-bash: cd: HOME not set\n");
+			ft_putstr_fd("-bash: cd: HOME not set\n", 2);
 			s->exit_status = 1;
 		}
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbaringo <jbaringo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jgalian- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 14:29:48 by jgalian-          #+#    #+#             */
-/*   Updated: 2021/04/23 12:31:24 by jbaringo         ###   ########.fr       */
+/*   Updated: 2021/04/27 10:10:04 by jgalian-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,6 @@ void			ft_lstiter(t_list *lst, void (*f)(void*));
 t_list			*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void*));
 void			*ft_free_ptr(void *ptr);
 void			*ft_realloc(void *ptr, size_t size);
+int				ft_putstrs_fd(char *before, char *str, char *after, int fd);
 
 #endif

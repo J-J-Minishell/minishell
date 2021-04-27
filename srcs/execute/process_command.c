@@ -14,12 +14,20 @@ void	no_blt(t_minishell *s)
 	}
 	else if ((st.st_mode & !S_IRWXU) || (st.st_mode & S_IFDIR))
 	{
-		ft_putstr_fd("-bash: ", 0);
-		ft_putstr_fd(s->tokens[0], 0);
+		//ft_putstrs_fd("-bash: ", s->tokens[0], 0, 2);
+		//ft_putstr_fd(s->tokens[0], 2);
 		if (st.st_mode & !S_IRWXU)
-			ft_putstr_fd(": Permission denied\n", 0);
+		{
+			ft_putstrs_fd("-bash: ", s->tokens[0], ": Permission denied\n", 2);
+			//ft_putstr_fd(": Permission denied\n", 2);
+			s->exit_status = 1;
+		}
 		else
-			ft_putstr_fd(": is a directory\n", 0);
+		{
+			ft_putstrs_fd("-bash: ", s->tokens[0], ": is a directory\n", 2);
+			//ft_putstr_fd(": is a directory\n", 2);
+			s->exit_status = 126;
+		}
 		return ;
 	}
 	ft_execute_command(s);
