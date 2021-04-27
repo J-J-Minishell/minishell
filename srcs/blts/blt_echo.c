@@ -2,17 +2,17 @@
 
 int	quotes(t_minishell *s, int i, int j)
 {
-	int		single_q;
-	int		double_q;
-
-	double_q = (s->tokens[i][j] == '"');
-	single_q = (s->tokens[i][j] == '\'');
-	while (s->tokens[i][j] && (double_q || single_q))
+	int		quote;
+	char	c;
+	
+	c = s->tokens[i][j];
+	quote = 1;
+	while (s->tokens[i][j] && quote)
 	{
 		j++;
-		double_q *= (s->tokens[i][j] != '"');
-		single_q *= (s->tokens[i][j] != '\'');
-		if (double_q || single_q)
+		if (s->tokens[i][j] == c && check_backslash(s->tokens[i], j))
+			quote = 0;
+		if (quote)
 		{
 			if (s->tokens[i][j] == '\\' && ((j > 0 && \
 				s->tokens[i][j - 1] == '\\') || s->tokens[i][j + 1] == '$'))
@@ -49,6 +49,8 @@ int	flag_newline(char *token)
 	int	i;
 	int	newline;
 
+	if (!token)
+		return (FALSE);
 	newline = FALSE;
 	i = 0;
 	if (token[i] == '-' && token[i + 1] == 'n')
@@ -62,8 +64,6 @@ int	flag_newline(char *token)
 				break ;
 			}
 		}
-		if (newline == TRUE)
-			return (newline);
 	}
 	return (newline);
 }
@@ -78,7 +78,7 @@ void	print_tokens(t_minishell *s, int i)
 		if ((s->tokens[i][j] == '"' || s->tokens[i][j] == '\'') && \
 			check_backslash(s->tokens[i], j))
 			j = quotes(s, i, j);
-		else if (s->tokens[i][j] != '\\')
+		else if (s->tokens[i][j] != '\\' && check_backslash(s->tokens[i], j))
 			write(s->fd, s->tokens[i] + j, 1);
 	}
 	if (j && s->tokens[i + 1] && s->tokens[i + 1][0] != '\0')

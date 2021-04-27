@@ -1,4 +1,5 @@
 #include "../../includes/minishell.h"
+
 int	skip_char(char *s, char c, int i)
 {
 	while (s[i] && s[i] == c)
@@ -6,25 +7,25 @@ int	skip_char(char *s, char c, int i)
 	return (i);
 }
 
-static int	count_words(char *s, char c)
+static int	count_words(char *s, char c, int w)
 {
-	int	i;
-	int	double_q;
-	int	single_q;
-	int	w;
+	int		i;
+	int		quote;
+	char	char_quote;
 
 	i = 0;
-	w = 1;
 	i = skip_char(s, c, i);
-	double_q = 0;
-	single_q = 0;
+	quote = 0;
 	while (s[i])
 	{
-		if (s[i] == '"' && check_backslash(s, i))
-			double_q = (double_q != 1);
-		else if (s[i] == '\'' && check_backslash(s, i))
-			single_q = (single_q != 1);
-		if (s[i] == c && !double_q && !single_q && check_backslash(s, i))
+		if (!quote && (s[i] == '"' || s[i] == '\'') && check_backslash(s, i))
+		{
+			quote = 1;
+			char_quote = s[i];
+		}
+		else if (quote && s[i] == char_quote && check_backslash(s, i))
+			quote = 0;
+		if (s[i] == c && !quote && check_backslash(s, i))
 		{
 			i = skip_char(s, c, i);
 			w += (s[i] != '\0');
@@ -37,20 +38,22 @@ static int	count_words(char *s, char c)
 
 static int	count_chars(char *s, char c)
 {
-	int	i;
-	int	double_q;
-	int	single_q;
+	int		i;
+	int		quote;
+	char	char_quote;
 
-	double_q = 0;
-	single_q = 0;
+	quote = 0;
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] == '"' && check_backslash(s, i))
-			double_q = (double_q != 1);
-		else if (s[i] == '\'' && check_backslash(s, i))
-			single_q = (single_q != 1);
-		if (s[i] == c && !double_q && !single_q && check_backslash(s, i))
+		if (!quote && (s[i] == '"' || s[i] == '\'') && check_backslash(s, i))
+		{
+			quote = 1;
+			char_quote = s[i];
+		}
+		else if (quote && s[i] == char_quote && check_backslash(s, i))
+			quote = 0;
+		if (s[i] == c && !quote && check_backslash(s, i))
 			break ;
 		i++;
 	}
@@ -76,7 +79,7 @@ char	**special_split(char *s, char c)
 
 	if (!s)
 		return (NULL);
-	wordcount = count_words(s, c);
+	wordcount = count_words(s, c, 1);
 	out = (char **)malloc(sizeof(char *) * (wordcount + 1));
 	if (!out)
 		return (NULL);
