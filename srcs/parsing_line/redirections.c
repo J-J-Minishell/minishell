@@ -110,6 +110,7 @@ int	output_redirections(t_minishell *s, int i, int redirections)
 	{
 		s->fd = 1;
 		ft_putstr_fd("bash: ambiguous redirect\n", 2);
+		return (-1);
 	}
 	return (redirections);
 }
@@ -124,6 +125,8 @@ int	check_redirections(t_minishell *s)
 	while (s->tokens[i])
 	{
 		redirections = output_redirections(s, i, redirections);
+		if (redirections == -1)
+			return (-1);
 		i++;
 		if (s->fd != 1 && s->tokens[i] && (!ft_strncmp(s->tokens[i], ">", 2) || \
 			!ft_strncmp(s->tokens[i], ">>", 3)))

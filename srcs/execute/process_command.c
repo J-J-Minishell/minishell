@@ -2,7 +2,7 @@
 
 void	error_directory(t_minishell *s, struct stat	st)
 {
-	if (st.st_mode & !S_IRWXU)
+	if (st.st_mode & !S_IRWXU) //S_IXUSR ejecuccion para el usuario
 	{
 		ft_putstrs_fd("-bash: ", s->tokens[0], ": Permission denied\n", 2);
 		s->exit_status = 1;
@@ -70,6 +70,7 @@ int	ft_check_for_pipes(t_minishell *s, int i)
 	j = -1;
 	while (s->commands[i][++j] != '\0')
 	{
+		j += skip_quotes(&s->commands[i][j]);
 		if (s->commands[i][j] == '|')
 			return (TRUE);
 	}
@@ -90,7 +91,7 @@ void	ft_process_command(t_minishell *s, int i)
 		check_env_var(s);
 		if (check_redirections(s) == -1)
 			return ;
-		if (s->tokens[0])
+		if (s->tokens[0] && s->tokens[0][0] != '\0')
 		{
 			ft_get_path(s);
 			ft_process_tokken(s);
