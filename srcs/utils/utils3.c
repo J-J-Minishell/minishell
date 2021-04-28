@@ -32,3 +32,24 @@ void	check_signal(t_minishell *s)
 		}
 	}
 }
+
+char	*get_cwd(t_minishell *s, int size)
+{
+	char	*tmp;
+	char	*buf;
+
+	buf = malloc(size);
+	if (!buf)
+		ft_print_error(s);
+	tmp = getcwd(buf, size);
+	while (tmp && errno == ERANGE)
+	{
+		size = size + 4096;
+		buf = ft_free_ptr(buf);
+		buf = ft_realloc(NULL, size);
+		if (!buf)
+			ft_print_error(s);
+		tmp = getcwd(buf, size);
+	}
+	return (buf);
+}

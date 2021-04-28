@@ -38,6 +38,7 @@ typedef struct s_minishell
 
 }				t_minishell;
 
+char	*get_cwd(t_minishell *s, int size);
 void	check_signal(t_minishell *s);
 int		check_incomplete_pipes(t_minishell *s);
 int		check_double_redirection_marks(t_minishell *s);

@@ -6,7 +6,7 @@ void	change_pwd(t_minishell *s)
 	char	*buf;
 	size_t	size;
 
-	size = INT32_MAX;
+	size = 4096;
 	i = ft_find_env_var(s, "PWD=");
 	if (i >= 0)
 	{
@@ -14,7 +14,7 @@ void	change_pwd(t_minishell *s)
 		export_env_var(s, buf, 7);
 		buf = ft_free_ptr(buf);
 		s->env[i] = ft_free_ptr(s->env[i]);
-		getcwd(buf, size);
+		buf = get_cwd(s, size);
 		s->env[i] = ft_strjoin("PWD=", buf);
 		buf = ft_free_ptr(buf);
 		s->exit_status = 0;
