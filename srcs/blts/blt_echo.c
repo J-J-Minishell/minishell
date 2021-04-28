@@ -4,7 +4,7 @@ int	quotes(t_minishell *s, int i, int j)
 {
 	int		quote;
 	char	c;
-	
+
 	c = s->tokens[i][j];
 	quote = 1;
 	while (s->tokens[i][j] && quote)

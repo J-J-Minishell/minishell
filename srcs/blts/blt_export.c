@@ -14,11 +14,11 @@ void	export(t_minishell *s)
 	}
 }
 
-int	print_export_error(t_minishell *s, char *token)
+int	print_export_error(char *token)
 {
 	char	*tmp;
 
-	tmp = error_backslash_var(s, token);
+	tmp = ft_strdup(token);
 	if (token[0] == '"')
 	{
 		free(tmp);
@@ -27,7 +27,7 @@ int	print_export_error(t_minishell *s, char *token)
 	ft_putstr_fd("-bash: export: `", 0);
 	ft_putstr_fd(tmp, 0);
 	ft_putstr_fd("': not a valid identifier\n", 0);
-	ft_free_ptr(tmp);
+	tmp = ft_free_ptr(tmp);
 	return (1);
 }
 
@@ -53,14 +53,14 @@ int	check_export_error(t_minishell *s, int i, int j)
 {
 	if (j == 0 && !ft_isalpha(s->tokens[i][j]))
 	{
-		s->exit_status = print_export_error(s, s->tokens[i]);
+		s->exit_status = print_export_error(s->tokens[i]);
 		return (1);
 	}
 	else if (s->tokens[i][j] == '=' || s->tokens[i][j] == '\\')
 		return (0);
 	else if (!ft_isalnum(s->tokens[i][j]) && j > 0 && s->tokens[i][j] != '\\')
 	{
-		s->exit_status = print_export_error(s, s->tokens[i]);
+		s->exit_status = print_export_error(s->tokens[i]);
 		return (1);
 	}
 	return (0);

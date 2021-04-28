@@ -25,7 +25,6 @@ typedef struct s_minishell
 	char	**env;
 	char	**commands;
 	char	**tokens;
-	char	*path;
 	char	*command_path;
 	char	**blt_cmds;
 	int		exit_status;
@@ -42,10 +41,9 @@ typedef struct s_minishell
 void	check_signal(t_minishell *s);
 int		check_incomplete_pipes(t_minishell *s);
 int		check_double_redirection_marks(t_minishell *s);
-int		ft_double_semicolon_check(t_minishell *s);
+int		ft_double_semicolon_check(t_minishell *s, int flag, int flag_redirect);
 int		double_redirection_error(t_minishell *s, int i);
 int		check_backslash(char *str, int i);
-char	*error_backslash_var(t_minishell *s, char *token);
 int		skip_quotes(char *s);
 void	ft_process_command(t_minishell *s, int i);
 int		check_redirections(t_minishell *s);

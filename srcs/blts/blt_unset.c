@@ -10,7 +10,7 @@ int	print_unset_error(char *token)
 		ft_free_ptr(tmp);
 		tmp = ft_strtrim(token, "\"");
 	}
-	ft_putstr_fd("-bash: export: `", 0);
+	ft_putstr_fd("-bash: unset: `", 0);
 	ft_putstr_fd(tmp, 0);
 	ft_putstr_fd("': not a valid identifier\n", 0);
 	ft_free_ptr(tmp);
@@ -41,7 +41,7 @@ void	unset_env_var(t_minishell *s, int delete)
 		i++;
 	}
 	tmp[j] = NULL;
-	free(s->env);
+	s->env = ft_free_matrix(s->env);
 	s->env = tmp;
 }
 

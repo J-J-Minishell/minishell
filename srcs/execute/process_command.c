@@ -1,5 +1,19 @@
 #include "../../includes/minishell.h"
 
+void	error_directory(t_minishell *s, struct stat	st)
+{
+	if (st.st_mode & !S_IRWXU)
+	{
+		ft_putstrs_fd("-bash: ", s->tokens[0], ": Permission denied\n", 2);
+		s->exit_status = 1;
+	}
+	else
+	{
+		ft_putstrs_fd("-bash: ", s->tokens[0], ": is a directory\n", 2);
+		s->exit_status = 126;
+	}
+}
+
 void	no_blt(t_minishell *s)
 {
 	struct stat	st;
@@ -7,7 +21,7 @@ void	no_blt(t_minishell *s)
 	if (stat(s->command_path, &st))
 	{
 		ft_putstr_fd("-bash_no_blt: ", 2);
-		ft_putstr_fd(error_backslash_var(s, s->tokens[0]), 2);
+		ft_putstr_fd(s->tokens[0], 2);
 		if (ft_strchr(s->tokens[0], '/') != NULL)
 			ft_putstr_fd(": No such file or directory\n", 2);
 		else
@@ -17,20 +31,7 @@ void	no_blt(t_minishell *s)
 	}
 	else if ((st.st_mode & !S_IRWXU) || (st.st_mode & S_IFDIR))
 	{
-		//ft_putstrs_fd("-bash: ", s->tokens[0], 0, 2);
-		//ft_putstr_fd(s->tokens[0], 2);
-		if (st.st_mode & !S_IRWXU)
-		{
-			ft_putstrs_fd("-bash: ", s->tokens[0], ": Permission denied\n", 2);
-			//ft_putstr_fd(": Permission denied\n", 2);
-			s->exit_status = 1;
-		}
-		else
-		{
-			ft_putstrs_fd("-bash: ", s->tokens[0], ": is a directory\n", 2);
-			//ft_putstr_fd(": is a directory\n", 2);
-			s->exit_status = 126;
-		}
+		error_directory(s, st);
 		return ;
 	}
 	ft_execute_command(s);
@@ -57,11 +58,7 @@ void	ft_process_tokken(t_minishell *s)
 	else if (i == 5)
 		blt_env(s);
 	else if (i == 6)
-	{
 		blt_exit(s);
-		//ft_clean_up(s);
-		//exit(0);
-	}
 	else
 		no_blt(s);
 }

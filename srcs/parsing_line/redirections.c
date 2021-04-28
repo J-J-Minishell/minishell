@@ -57,13 +57,8 @@ void	delete_in_redirections(t_minishell *s, int redirections, int i)
 	s->tokens = tokens;
 }
 
-int	check_in_redirections(t_minishell *s)
+int	check_in_redirections(t_minishell *s, int i, int redirections)
 {
-	int		i;
-	int		redirections;
-
-	redirections = 0;
-	i = 0;
 	while (s->tokens[i])
 	{
 		if (ft_strncmp(s->tokens[i], "<", 2) == 0)
@@ -71,11 +66,13 @@ int	check_in_redirections(t_minishell *s)
 			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
 			if (s->fdi == -1)
 			{
-				ft_putstr_fd("-bash: ", 2);
-				ft_putstr_fd(s->tokens[2], 2);
-				ft_putstr_fd(": ", 2);
-				ft_putstr_fd(strerror(errno), 2);
-				write(2, "\n", 1);
+				if (s->tokens[i + 1] && s->tokens[i + 1][0] == '\0')
+					ft_putstr_fd("bash: ambiguous redirect\n", 2);
+				else
+				{
+					ft_putstrs_fd("-bash: ", s->tokens[i + 1], ": ", 2);
+					ft_putstrs_fd(strerror(errno), "\n", 0, 2);
+				}
 				s->fdi = 0;
 				s->exit_status = 1;
 				return (-1);
@@ -112,7 +109,7 @@ int	output_redirections(t_minishell *s, int i, int redirections)
 	if (s->fd < 0)
 	{
 		s->fd = 1;
-		ft_putstr_fd("error", 2);
+		ft_putstr_fd("bash: ambiguous redirect\n", 2);
 	}
 	return (redirections);
 }
@@ -134,7 +131,7 @@ int	check_redirections(t_minishell *s)
 	}
 	if (redirections)
 		delete_redirections(s, redirections, i);
-	if (check_in_redirections(s) == -1)
+	if (check_in_redirections(s, 0, 0) == -1)
 		return (-1);
 	return (0);
 }

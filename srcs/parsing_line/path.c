@@ -29,14 +29,17 @@ void	ft_get_path(t_minishell *s)
 	else
 	{
 		paths = ft_split(path, ':');
+		path = ft_free_ptr(path);
 		tmp = ft_check_dir(s, paths);
 		if (!tmp)
+		{
+			paths = ft_free_matrix(paths);
 			return (check_actual_dir(s));
+		}
 		complete_path = ft_strjoin(tmp, "/");
 		paths = ft_free_matrix(paths);
 		s->command_path = ft_strjoin(complete_path, s->tokens[0]);
 		complete_path = ft_free_ptr(complete_path);
-		path = ft_free_ptr(path);
 	}
 }
 

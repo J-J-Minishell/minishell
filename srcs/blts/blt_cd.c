@@ -1,43 +1,12 @@
 #include "../../includes/minishell.h"
 
-char	*get_cwd(t_minishell *s, int size)
-{
-	char	*tmp;
-	char	*buf;
-
-	buf = malloc(size);
-	if (!buf)
-		ft_print_error(s);
-	tmp = getcwd(buf, size);
-	//if (!tmp)
-	// {
-	// 	ft_putstr_fd("cd: error retrieving current directory: getcwd: ", 2);
-	// 	ft_putstr_fd("cannot access parent directories: ", 2);
-	// 	ft_putstr_fd("No such file or directory\n", 2);
-	// 	s->exit_status = 1;
-	// 	return (tmp);
-	// }
-	// if (!tmp)
-	// {
-	while (tmp && errno == ERANGE)
-	{
-		size = size + 4096;
-		buf = ft_free_ptr(buf);
-		buf = ft_realloc(NULL, size);
-		if (!buf)
-			ft_print_error(s);
-		tmp = getcwd(buf, size);
-	}
-	return (buf);
-}
-
 void	change_pwd(t_minishell *s)
 {
 	int		i;
 	char	*buf;
 	size_t	size;
 
-	size = 4096;
+	size = INT32_MAX;
 	i = ft_find_env_var(s, "PWD=");
 	if (i >= 0)
 	{
@@ -45,17 +14,40 @@ void	change_pwd(t_minishell *s)
 		export_env_var(s, buf, 7);
 		buf = ft_free_ptr(buf);
 		s->env[i] = ft_free_ptr(s->env[i]);
-		buf = get_cwd(s, size);
-		// if (!buf)
-		// 	return ;
+		getcwd(buf, size);
 		s->env[i] = ft_strjoin("PWD=", buf);
 		buf = ft_free_ptr(buf);
 		s->exit_status = 0;
 	}
 }
 
-int	special_chars_cd(t_minishell *s, char *tmp, int i)
+int	special_chars_cd_2(t_minishell *s)
 {
+	int	i;
+
+	i = ft_find_env_var(s, "OLDPWD=");
+	if (i >= 0)
+	{
+		free(s->tokens[1]);
+		s->tokens[1] = ft_strdup(s->env[i] + 7);
+		ft_putstrs_fd(s->tokens[1], "\n", 0, 1);
+	}
+	else
+	{
+		ft_putstr_fd("-bash: cd: OLDPWD not set\n", 2);
+		s->exit_status = 1;
+		return (-1);
+	}
+	return (0);
+}
+
+int	special_chars_cd(t_minishell *s)
+{
+	int		i;
+	char	*tmp;
+
+	tmp = NULL;
+	i = 0;
 	if (s->tokens[1][0] == '~')
 	{
 		i = ft_find_env_var(s, "HOME=");
@@ -68,21 +60,7 @@ int	special_chars_cd(t_minishell *s, char *tmp, int i)
 			s->tokens[1] = ft_strdup(s->home);
 	}
 	else if (s->tokens[1][0] == '-')
-	{
-		i = ft_find_env_var(s, "OLDPWD=");
-		if (i >= 0)
-		{
-			free(s->tokens[1]);
-			s->tokens[1] = ft_strdup(s->env[i] + 7);
-			ft_putstrs_fd(s->tokens[1], "\n", 0, 1);
-		}
-		else
-		{
-			ft_putstr_fd("-bash: cd: OLDPWD not set\n", 2);
-			s->exit_status = 1;
-			return (-1);
-		}
-	}
+		return (special_chars_cd_2(s));
 	return (0);
 }
 
@@ -100,10 +78,8 @@ void	cd_with_arguments(t_minishell *s)
 		s->tokens[1] = tmp;
 	}
 	else
-	{
-		if (special_chars_cd(s, NULL, 0) == -1)
+		if (special_chars_cd(s) == -1)
 			return ;
-	}
 	if (chdir(s->tokens[1]) == 0)
 		change_pwd(s);
 	else

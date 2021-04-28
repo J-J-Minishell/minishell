@@ -18,7 +18,7 @@ int	open_quotes(int i, int double_q, int single_q)
 	return (i);
 }
 
-int	check_open_quotes()
+int	check_open_quotes(void)
 {
 	int	i;
 	int	double_q;
@@ -78,7 +78,7 @@ void	ft_process_line(t_minishell *s)
 {
 	int		i;
 
-	if (ft_double_semicolon_check(s) || check_open_quotes() || \
+	if (ft_double_semicolon_check(s, TRUE, FALSE) || check_open_quotes() || \
 		check_double_redirection_marks(s) || check_incomplete_pipes(s))
 		return ;
 	get_redirection_marks_apart(-1, NULL, NULL);
