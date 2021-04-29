@@ -72,6 +72,13 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 		s->home = ft_strdup(s->env[i] + 5);
 	else
 		s->home = NULL;
+	i = ft_find_env_var(s, "SHLVL=");
+	if (i >= 0)
+	{
+		n = ft_atoi(s->env[i] + 6);
+		s->env[i] = ft_free_ptr(s->env[i]);
+		s->env[i] = ft_strjoin("SHLVL=", ft_itoa(++n));
+	}
 }
 
 void	ft_initialize_variables(t_minishell *s)

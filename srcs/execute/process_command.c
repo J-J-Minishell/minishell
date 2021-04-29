@@ -2,7 +2,7 @@
 
 void	error_directory(t_minishell *s, struct stat	st)
 {
-	if (st.st_mode & !S_IRWXU) //S_IXUSR ejecuccion para el usuario
+	if (!(st.st_mode & S_IXUSR))
 	{
 		ft_putstrs_fd("-bash: ", s->tokens[0], ": Permission denied\n", 2);
 		s->exit_status = 1;
@@ -29,7 +29,7 @@ void	no_blt(t_minishell *s)
 		s->exit_status = 127;
 		return ;
 	}
-	else if ((st.st_mode & !S_IRWXU) || (st.st_mode & S_IFDIR))
+	else if (!(st.st_mode & S_IXUSR) || (st.st_mode & S_IFDIR))
 	{
 		error_directory(s, st);
 		return ;
