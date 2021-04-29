@@ -54,8 +54,9 @@ int	main(int argc, char *argv[], char **envp)
 
 void	ft_get_env_variables(t_minishell *s, char **envp)
 {
-	int	i;
-	int	n;
+	int		i;
+	int		n;
+	char	*tmp;
 
 	n = 0;
 	while (envp[n])
@@ -70,15 +71,13 @@ void	ft_get_env_variables(t_minishell *s, char **envp)
 	i = ft_find_env_var(s, "HOME=");
 	if (i >= 0)
 		s->home = ft_strdup(s->env[i] + 5);
-	else
-		s->home = NULL;
+	s->pwd = get_cwd(s, 4096);
+	tmp = ft_strjoin("PWD=", s->pwd);
+	export_env_var(s, tmp, 4);
+	free(tmp);
 	i = ft_find_env_var(s, "SHLVL=");
 	if (i >= 0)
-	{
-		n = ft_atoi(s->env[i] + 6);
-		s->env[i] = ft_free_ptr(s->env[i]);
-		s->env[i] = ft_strjoin("SHLVL=", ft_itoa(++n));
-	}
+		s->env[i][6] = s->env[i][6] + 1;
 }
 
 void	ft_initialize_variables(t_minishell *s)
@@ -95,6 +94,7 @@ void	ft_initialize_variables(t_minishell *s)
 	s->new_hist_cmd = NULL;
 	s->fd = 1;
 	s->fdi = 0;
+	s->home = NULL;
 	s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1));
 	if (!s->blt_cmds)
 		ft_print_error(s);

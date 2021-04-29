@@ -29,6 +29,7 @@ typedef struct s_minishell
 	char	**blt_cmds;
 	int		exit_status;
 	char	*home;
+	char	*pwd;
 	int		fd;
 	int		fdi;
 	char	**history_cmds;
@@ -39,7 +40,7 @@ typedef struct s_minishell
 }				t_minishell;
 
 char	*get_cwd(t_minishell *s, int size);
-void	check_signal(t_minishell *s);
+void	check_signal(t_minishell *s, int child);
 int		check_incomplete_pipes(t_minishell *s);
 int		check_double_redirection_marks(t_minishell *s);
 int		ft_double_semicolon_check(t_minishell *s, int flag, int flag_redirect);

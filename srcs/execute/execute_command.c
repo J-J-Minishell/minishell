@@ -35,13 +35,22 @@ void	ft_execute_command(t_minishell *s)
 	{
 		waitpid(child_pid, &stat_loc, WUNTRACED);
 		s->exit_status = WEXITSTATUS(stat_loc);
+		check_signal(s, 1);
 	}
 }
 
 void	child_sig_handler(int sig)
 {
 	if (sig == SIGINT)
+	{
 		write(2, "\n", 1);
+		g_ln = ft_free_ptr(g_ln);
+		g_ln = ft_strdup("ctrl^C");
+	}
 	else if (sig == SIGQUIT)
+	{
 		ft_putstr_fd("Quit: 3\n", 2);
+		g_ln = ft_free_ptr(g_ln);
+		g_ln = ft_strdup("ctrl^\\");
+	}
 }

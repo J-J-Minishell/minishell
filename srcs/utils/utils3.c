@@ -12,7 +12,7 @@ int	check_backslash(char *str, int i)
 	return (TRUE);
 }
 
-void	check_signal(t_minishell *s)
+void	check_signal(t_minishell *s, int child)
 {
 	char	*tmp;
 
@@ -21,7 +21,10 @@ void	check_signal(t_minishell *s)
 		if (!ft_strncmp(g_ln, "ctrl^C", 7))
 		{
 			g_ln = ft_free_ptr(g_ln);
-			s->exit_status = 1;
+			if (!child)
+				s->exit_status = 1;
+			else
+				s->exit_status = 130;
 		}
 		else if (!ft_strncmp(g_ln, "ctrl^C", 6))
 		{
@@ -29,6 +32,11 @@ void	check_signal(t_minishell *s)
 			free(g_ln);
 			g_ln = tmp;
 			s->exit_status = 1;
+		}
+		else if (!ft_strncmp(g_ln, "ctrl^\\", 7))
+		{
+			g_ln = ft_free_ptr(g_ln);
+			s->exit_status = 131;
 		}
 	}
 }

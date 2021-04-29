@@ -2,23 +2,19 @@
 
 void	change_pwd(t_minishell *s)
 {
-	int		i;
 	char	*buf;
 	size_t	size;
 
 	size = 4096;
-	i = ft_find_env_var(s, "PWD=");
-	if (i >= 0)
-	{
-		buf = ft_strjoin("OLDPWD=", s->env[i] + 4);
-		export_env_var(s, buf, 7);
-		buf = ft_free_ptr(buf);
-		s->env[i] = ft_free_ptr(s->env[i]);
-		buf = get_cwd(s, size);
-		s->env[i] = ft_strjoin("PWD=", buf);
-		buf = ft_free_ptr(buf);
-		s->exit_status = 0;
-	}
+	buf = ft_strjoin("OLDPWD=", s->pwd);
+	export_env_var(s, buf, 7);
+	buf = ft_free_ptr(buf);
+	free (s->pwd);
+	s->pwd = get_cwd(s, size);
+	buf = ft_strjoin("PWD=", s->pwd);
+	export_env_var(s, buf, 4);
+	buf = ft_free_ptr(buf);
+	s->exit_status = 0;
 }
 
 int	special_chars_cd_2(t_minishell *s)

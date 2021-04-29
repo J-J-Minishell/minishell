@@ -22,7 +22,8 @@ void	no_blt(t_minishell *s)
 	{
 		ft_putstr_fd("-bash_no_blt: ", 2);
 		ft_putstr_fd(s->tokens[0], 2);
-		if (ft_strchr(s->tokens[0], '/') != NULL)
+		if (ft_strchr(s->tokens[0], '/') != NULL || \
+			ft_find_env_var(s, "PATH=") == -1)
 			ft_putstr_fd(": No such file or directory\n", 2);
 		else
 			ft_putstr_fd(": command not found\n", 2);
