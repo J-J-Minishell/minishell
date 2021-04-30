@@ -78,7 +78,12 @@ void	print_tokens(t_minishell *s, int i)
 		if ((s->tokens[i][j] == '"' || s->tokens[i][j] == '\'') && \
 			check_backslash(s->tokens[i], j))
 			j = quotes(s, i, j);
-		else if (s->tokens[i][j] != '\\' && check_backslash(s->tokens[i], j))
+		else if (s->tokens[i][j] == '\\')
+		{
+			if (j > 0 && s->tokens[i][j - 1] == '\\' && check_backslash(s->tokens[i], j))
+				write(s->fd, s->tokens[i] + j, 1);
+		}
+		else
 			write(s->fd, s->tokens[i] + j, 1);
 	}
 	if (j && s->tokens[i + 1] && s->tokens[i + 1][0] != '\0')

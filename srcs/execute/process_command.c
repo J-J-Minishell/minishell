@@ -20,7 +20,7 @@ void	no_blt(t_minishell *s)
 
 	if (stat(s->command_path, &st))
 	{
-		ft_putstr_fd("-bash_no_blt: ", 2);
+		ft_putstr_fd("-bash: ", 2);
 		ft_putstr_fd(s->tokens[0], 2);
 		if (ft_strchr(s->tokens[0], '/') != NULL || \
 			ft_find_env_var(s, "PATH=") == -1)
