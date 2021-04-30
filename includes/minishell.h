@@ -36,7 +36,7 @@ typedef struct s_minishell
 	int		n_cmds;
 	char	*new_hist_cmd;
 	char	**pipe_commands;
-
+	int		flag_pipe;
 }				t_minishell;
 
 char	*get_cwd(t_minishell *s, int size);

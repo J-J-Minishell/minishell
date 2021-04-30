@@ -13,8 +13,11 @@ void	process_son(t_minishell *s, int *fds, int *flag)
 {
 	int	j;
 
+	signal(SIGINT, child_sig_handler);
+	signal(SIGQUIT, child_sig_handler);
 	if (!fork())
 	{
+		s->flag_pipe = 1;
 		if (!flag[0])
 			dup2(fds[0], STDIN_FILENO);
 		if (!flag[1])

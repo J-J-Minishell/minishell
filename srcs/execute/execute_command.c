@@ -24,12 +24,16 @@ void	ft_execute_command(t_minishell *s)
 	pid_t	child_pid;
 	int		stat_loc;
 
-	signal(SIGINT, child_sig_handler);
-	signal(SIGQUIT, child_sig_handler);
-	child_pid = fork();
+	child_pid = 0;
+	if (!s->flag_pipe)
+	{
+		child_pid = fork();
+		signal(SIGINT, child_sig_handler);
+		signal(SIGQUIT, child_sig_handler);
+	}
 	if (child_pid < 0)
 		ft_print_error(s);
-	else if (child_pid == 0)
+	else if (child_pid == 0 || s->flag_pipe)
 		ft_child_process(s);
 	else
 	{

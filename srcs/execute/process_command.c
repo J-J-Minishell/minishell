@@ -91,7 +91,10 @@ void	ft_process_command(t_minishell *s, int i)
 		s->tokens = special_split(s->commands[i], ' ');
 		check_env_var(s);
 		if (check_redirections(s) == -1)
+		{
+			s->tokens = ft_free_matrix(s->tokens);
 			return ;
+		}
 		if (s->tokens[0] && s->tokens[0][0] != '\0')
 		{
 			ft_get_path(s);

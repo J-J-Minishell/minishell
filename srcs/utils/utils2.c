@@ -57,6 +57,8 @@ void	ft_clean_up(t_minishell *s)
 		s->tokens = ft_free_matrix(s->tokens);
 	if (s->history_cmds != NULL)
 		s->history_cmds = ft_free_matrix(s->history_cmds);
+	if (s->pwd != NULL)
+		s->pwd = ft_free_ptr(s->pwd);
 	s->env = ft_free_matrix(s->env);
 	s->blt_cmds = ft_free_matrix(s->blt_cmds);
 }

@@ -95,6 +95,7 @@ void	ft_initialize_variables(t_minishell *s)
 	s->fd = 1;
 	s->fdi = 0;
 	s->home = NULL;
+	s->flag_pipe = 0;
 	s->blt_cmds = (char **)malloc(sizeof(char *) * (7 + 1));
 	if (!s->blt_cmds)
 		ft_print_error(s);
