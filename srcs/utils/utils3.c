@@ -61,3 +61,26 @@ char	*get_cwd(t_minishell *s, int size)
 	}
 	return (buf);
 }
+
+void	remove_tokens_quotes(t_minishell *s)
+{
+	int		i;
+	char	*tmp;
+
+	i = -1;
+	while (s->tokens[++i])
+	{
+		tmp = ft_strtrim(s->tokens[i], "\"'");
+		free(s->tokens[i]);
+		s->tokens[i] = ft_strdup(tmp);
+	}
+}
+
+void	remove_token_quotes(t_minishell *s, int i)
+{
+	char	*tmp;
+
+	tmp = ft_strtrim(s->tokens[i], "\"'");
+	free(s->tokens[i]);
+	s->tokens[i] = tmp;
+}

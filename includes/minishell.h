@@ -39,6 +39,9 @@ typedef struct s_minishell
 	int		flag_pipe;
 }				t_minishell;
 
+int		check_in_redirections(t_minishell *s);
+void	remove_token_quotes(t_minishell *s, int i);
+void	remove_tokens_quotes(t_minishell *s);
 char	*get_cwd(t_minishell *s, int size);
 void	check_signal(t_minishell *s, int child);
 int		check_incomplete_pipes(t_minishell *s);

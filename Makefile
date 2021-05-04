@@ -8,7 +8,7 @@ SRCS =	srcs/blts/blt_unset.c srcs/blts/blt_export.c srcs/blts/blt_env.c \
 		srcs/execute/process_command.c srcs/parsing_line/env_var.c \
 		srcs/parsing_line/history_cmds.c srcs/parsing_line/path.c \
 		srcs/parsing_line/process_line.c srcs/parsing_line/process_line_errors.c \
-		srcs/parsing_line/read_line.c \
+		srcs/parsing_line/read_line.c srcs/parsing_line/input_redirections.c\
 		srcs/parsing_line/redirections.c srcs/utils/utils.c \
 		srcs/utils/utils2.c srcs/utils/utils3.c srcs/utils/special_split.c \
         srcs/minishell.c srcs/blts/blt_exit.c

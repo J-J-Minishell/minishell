@@ -29,90 +29,31 @@ void	delete_redirections(t_minishell *s, int redirections, int i)
 	s->tokens = tokens;
 }
 
-void	delete_in_redirections(t_minishell *s, int redirections, int i)
-{
-	char	**tokens;
-	int		len;
-	int		j;
-
-	len = i - (redirections * 2);
-	tokens = (char **)malloc(sizeof(char *) * (len + 1));
-	if (!tokens)
-		ft_print_error(s);
-	i = 0;
-	j = 0;
-	while (s->tokens[i])
-	{
-		if (!ft_strncmp(s->tokens[i], "<", 2))
-			i += 2;
-		else
-		{
-			tokens[j] = ft_strdup(s->tokens[i]);
-			j++;
-			i++;
-		}
-	}
-	tokens[j] = NULL;
-	s->tokens = ft_free_matrix(s->tokens);
-	s->tokens = tokens;
-}
-
-int	check_in_redirections(t_minishell *s, int i, int redirections)
-{
-	while (s->tokens[i])
-	{
-		if (ft_strncmp(s->tokens[i], "<", 2) == 0)
-		{
-			s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
-			if (s->fdi == -1)
-			{
-				if (s->tokens[i + 1] && s->tokens[i + 1][0] == '\0')
-					ft_putstr_fd("bash: ambiguous redirect\n", 2);
-				else
-				{
-					ft_putstrs_fd("-bash: ", s->tokens[i + 1], ": ", 2);
-					ft_putstrs_fd(strerror(errno), "\n", 0, 2);
-				}
-				s->fdi = 0;
-				s->exit_status = 1;
-				return (-1);
-			}
-			redirections++;
-		}
-		i++;
-	}
-	if (redirections)
-		delete_in_redirections(s, redirections, i);
-	return (0);
-}
-
-int	output_redirections(t_minishell *s, int i, int redirections)
+int	output_redirections(t_minishell *s, int i, char *tmp)
 {
 	if (!ft_strncmp(s->tokens[i], ">", 2))
-	{
-		s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_TRUNC, 0666);
-		redirections++;
-	}
+		s->fd = open(tmp, O_RDWR | O_CREAT | O_TRUNC, 0666);
 	else if (!ft_strncmp(s->tokens[i], "<>", 3))
 	{
-		s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_TRUNC, 0666);
+		s->fd = open(tmp, O_RDWR | O_CREAT | O_TRUNC, 0666);
 		close(s->fd);
 		s->fd = 1;
-		s->fdi = open(s->tokens[i + 1], O_RDONLY, 0);
-		redirections++;
+		s->fdi = open(tmp, O_RDONLY, 0);
 	}
-	else if (ft_strncmp(s->tokens[i], ">>", 3) == 0)
-	{
-		s->fd = open(s->tokens[i + 1], O_RDWR | O_CREAT | O_APPEND, 0666);
-		redirections++;
-	}
+	else if (!ft_strncmp(s->tokens[i], ">>", 3))
+		s->fd = open(tmp, O_RDWR | O_CREAT | O_APPEND, 0666);
+	if (tmp)
+		free(tmp);
 	if (s->fd < 0)
 	{
 		s->fd = 1;
-		ft_putstr_fd("bash: ambiguous redirect\n", 2);
-		return (-1);
+		if (tmp && tmp[0] == '\0')
+			ft_putstr_fd("bash: ambiguous redirect\n", 2);
+		else
+			ft_putstrs_fd("-bash: ", tmp, ": Permission denied\n", 2);
+		return (1);
 	}
-	return (redirections);
+	return (0);
 }
 
 int	check_redirections(t_minishell *s)
@@ -124,9 +65,13 @@ int	check_redirections(t_minishell *s)
 	i = 0;
 	while (s->tokens[i])
 	{
-		redirections = output_redirections(s, i, redirections);
-		if (redirections == -1)
-			return (-1);
+		if (!ft_strncmp(s->tokens[i], "<>", 2) || \
+		!ft_strncmp(s->tokens[i], ">", 3) || !ft_strncmp(s->tokens[i], ">>", 3))
+		{
+			if (output_redirections(s, i, ft_strtrim(s->tokens[i + 1], "\"'")))
+				return (-1);
+			redirections++;
+		}
 		i++;
 		if (s->fd != 1 && s->tokens[i] && (!ft_strncmp(s->tokens[i], ">", 2) || \
 			!ft_strncmp(s->tokens[i], ">>", 3)))
@@ -134,7 +79,7 @@ int	check_redirections(t_minishell *s)
 	}
 	if (redirections)
 		delete_redirections(s, redirections, i);
-	if (check_in_redirections(s, 0, 0) == -1)
+	if (check_in_redirections(s) == -1)
 		return (-1);
 	return (0);
 }

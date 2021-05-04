@@ -81,7 +81,7 @@ void	print_tokens(t_minishell *s, int i)
 		else if (s->tokens[i][j] == '\\')
 		{
 			if (j > 0 && s->tokens[i][j - 1] == '\\' && \
-				check_backslash(s->tokens[i], j))
+				check_backslash(s->tokens[i], j - 1))
 				write(s->fd, s->tokens[i] + j, 1);
 		}
 		else

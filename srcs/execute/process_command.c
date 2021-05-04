@@ -61,7 +61,10 @@ void	ft_process_tokken(t_minishell *s)
 	else if (i == 6)
 		blt_exit(s);
 	else
+	{
+		remove_tokens_quotes(s);
 		no_blt(s);
+	}
 }
 
 int	ft_check_for_pipes(t_minishell *s, int i)
@@ -97,6 +100,7 @@ void	ft_process_command(t_minishell *s, int i)
 		}
 		if (s->tokens[0] && s->tokens[0][0] != '\0')
 		{
+			remove_token_quotes(s, 0);
 			ft_get_path(s);
 			ft_process_tokken(s);
 		}

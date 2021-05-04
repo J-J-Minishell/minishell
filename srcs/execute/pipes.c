@@ -9,10 +9,8 @@ void	switch_pipes(int *fds)
 	pipe(fds + 2);
 }
 
-void	process_son(t_minishell *s, int *fds, int *flag)
+void	process_son(t_minishell *s, int *fds, int *flag, int j)
 {
-	int	j;
-
 	signal(SIGINT, child_sig_handler);
 	signal(SIGQUIT, child_sig_handler);
 	if (!fork())
@@ -28,6 +26,7 @@ void	process_son(t_minishell *s, int *fds, int *flag)
 		check_env_var(s);
 		if (check_redirections(s) != -1)
 		{
+			remove_token_quotes(s, 0);
 			ft_get_path(s);
 			ft_process_tokken(s);
 		}
@@ -68,7 +67,7 @@ void	ft_pipes(t_minishell *s)
 		s->tokens = special_split(s->pipe_commands[i], ' ');
 		if (!s->pipe_commands[i + 1])
 			flag[1] = 1;
-		process_son(s, fds, flag);
+		process_son(s, fds, flag, 0);
 		sons++;
 		flag[0] = 0;
 		switch_pipes(fds);
