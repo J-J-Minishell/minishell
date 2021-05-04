@@ -73,6 +73,7 @@ void	remove_tokens_quotes(t_minishell *s)
 		tmp = ft_strtrim(s->tokens[i], "\"'");
 		free(s->tokens[i]);
 		s->tokens[i] = ft_strdup(tmp);
+		free(tmp);
 	}
 }
 

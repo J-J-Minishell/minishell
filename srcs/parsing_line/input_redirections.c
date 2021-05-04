@@ -40,10 +40,14 @@ int	input_redirections(t_minishell *s, char *tmp)
 			ft_putstrs_fd("-bash: ", tmp, ": ", 2);
 			ft_putstrs_fd(strerror(errno), "\n", 0, 2);
 		}
+		if (tmp)
+			free(tmp);
 		s->fdi = 0;
 		s->exit_status = 1;
 		return (1);
 	}
+	if (tmp)
+		free(tmp);
 	return (0);
 }
 
