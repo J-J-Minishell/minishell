@@ -56,7 +56,8 @@ void	blt_unset(t_minishell *s)
 	while (s->tokens[i])
 	{
 		j = ft_find_env_var(s, s->tokens[i]);
-		if (!ft_isalpha(s->tokens[i][0]) && s->tokens[i][0] != '_')
+		if ((!ft_isalpha(s->tokens[i][0]) && s->tokens[i][0] != '_')
+			|| ft_strchr(s->tokens[i], '='))
 			exit = print_unset_error(s->tokens[i]);
 		else if (j >= 0)
 		{
